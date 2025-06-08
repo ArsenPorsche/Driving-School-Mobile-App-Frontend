@@ -1,0 +1,116 @@
+import { StyleSheet } from "react-native";
+
+export const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#f8f9fa",
+    paddingTop: 60,
+  },
+  flatListContent: {
+    padding: 20,
+  },
+  header: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 20,
+    textAlign: "center",
+    color: "#2d4150",
+  },
+  label: {
+    fontSize: 16,
+    fontWeight: "600",
+    marginBottom: 10,
+    color: "#2d4150",
+  },
+  pickerContainer: {
+    marginBottom: 20,
+  },
+  picker: {
+    minHeight: 50,
+    borderWidth: 1,
+    borderColor: "#e1e8ed",
+    borderRadius: 8,
+    backgroundColor: "#ffffff",
+  },
+  dropDown: {
+    borderWidth: 1,
+    borderColor: "#e1e8ed",
+    borderRadius: 8,
+    backgroundColor: "#ffffff",
+  },
+  calendarContainer: {
+    marginBottom: 20,
+    borderRadius: 8,
+    overflow: "hidden",
+    elevation: 2,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
+  timesContainer: {
+    marginBottom: 20,
+  },
+  timeGrid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
+  },
+  timeButton: {
+    backgroundColor: "#ffffff",
+    borderWidth: 1,
+    borderColor: "#e1e8ed",
+    borderRadius: 8,
+    padding: 12,
+    margin: 4,
+    minWidth: "45%",
+    alignItems: "center",
+    elevation: 1,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
+  },
+  selectedTimeButton: {
+    backgroundColor: "#007AFF",
+    borderColor: "#007AFF",
+  },
+  timeButtonText: {
+    fontSize: 14,
+    color: "#2d4150",
+    fontWeight: "500",
+  },
+  selectedTimeButtonText: {
+    color: "#ffffff",
+    fontWeight: "600",
+  },
+  noTimesText: {
+    textAlign: "center",
+    color: "#8e8e93",
+    fontSize: 14,
+    fontStyle: "italic",
+    marginTop: 10,
+  },
+  buttonContainer: {
+    marginTop: 20,
+    marginBottom: 20,
+    borderRadius: 8,
+    overflow: "hidden",
+  },
+  infoContainer: {
+    backgroundColor: "#ffffff",
+    padding: 15,
+    borderRadius: 8,
+    marginBottom: 20,
+    elevation: 1,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
+  },
+  infoText: {
+    fontSize: 14,
+    color: "#2d4150",
+    marginBottom: 5,
+  },
+});
