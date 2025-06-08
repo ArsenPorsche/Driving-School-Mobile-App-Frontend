@@ -113,4 +113,16 @@ export const styles = StyleSheet.create({
     color: "#2d4150",
     marginBottom: 5,
   },
+  instructorGroup: {
+    marginBottom: 15,
+    backgroundColor: "#f8f9fa",
+    padding: 10,
+    borderRadius: 8,
+  },
+  instructorGroupTitle: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#2d4150",
+    marginBottom: 10,
+  },
 });

@@ -8,7 +8,7 @@ import moment from "moment";
 
 export default function App() {
   const [instructors, setInstructors] = useState([]);
-  const [selectedInstructor, setSelectedInstructor] = useState(null);
+  const [selectedInstructor, setSelectedInstructor] = useState("all");
   const [lessons, setLessons] = useState([]);
   const [availableTimes, setAvailableTimes] = useState([]);
   const [selectedDate, setSelectedDate] = useState(null);
@@ -16,19 +16,20 @@ export default function App() {
   const [studentName] = useState("Volodymyr");
   const [openInstructorDropdown, setOpenInstructorDropdown] = useState(false);
   const [markedDates, setMarkedDates] = useState({});
+  const [selectedButton, setSelectedButton] = useState(null);
 
   useEffect(() => {
     loadInitialData();
   }, []);
 
   useEffect(() => {
-    const { marked, times } = processLessonsData(
+    const { marked, groupedTimes } = processLessonsData(
       lessons,
       selectedInstructor,
       selectedDate
     );
     setMarkedDates(marked);
-    setAvailableTimes(times);
+    setAvailableTimes(groupedTimes);
   }, [lessons, selectedInstructor, selectedDate]);
 
   const loadInitialData = async () => {
@@ -36,12 +37,14 @@ export default function App() {
       // Load instructors
       const instructorsData = await instructorService.getInstructors();
       if (Array.isArray(instructorsData)) {
-        setInstructors(
-          instructorsData.map((instructor) => ({
+        const instructorOptions = [
+          { label: "All Instructors", value: "all" },
+          ...instructorsData.map((instructor) => ({
             label: instructor.name || "Unknown",
             value: instructor._id || instructor.id || "unknown",
-          }))
-        );
+          })),
+        ];
+        setInstructors(instructorOptions);
       }
 
       // Load lessons
@@ -67,8 +70,9 @@ export default function App() {
     }
   };
 
-  const handleTimeSelect = (timeValue) => {
+  const handleTimeSelect = (timeValue, buttonIndex) => {
     setSelectedTime(timeValue);
+    setSelectedButton(buttonIndex);
   };
 
   const handleBookLesson = async () => {
@@ -114,6 +118,7 @@ export default function App() {
       handleTimeSelect,
       handleBookLesson,
       selectedDate,
+      selectedButton,
     });
 
   return (

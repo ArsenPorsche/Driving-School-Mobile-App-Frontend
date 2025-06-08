@@ -20,6 +20,7 @@ export const renderItem = (item, props) => {
     handleTimeSelect,
     handleBookLesson,
     selectedDate,
+    selectedButton,
   } = props;
 
   switch (item.type) {
@@ -62,31 +63,39 @@ export const renderItem = (item, props) => {
         <View style={styles.timesContainer}>
           <Text style={styles.label}>Available Times:</Text>
           {availableTimes.length > 0 ? (
-            <View style={styles.timeGrid}>
-              {availableTimes.map((time, index) => (
-                <TouchableOpacity
-                  key={index}
-                  style={[
-                    styles.timeButton,
-                    selectedTime === time.value && styles.selectedTimeButton,
-                  ]}
-                  onPress={() => handleTimeSelect(time.value)}
-                >
-                  <Text
-                    style={[
-                      styles.timeButtonText,
-                      selectedTime === time.value &&
-                        styles.selectedTimeButtonText,
-                    ]}
-                  >
-                    {time.label}
-                  </Text>
-                </TouchableOpacity>
-              ))}
-            </View>
+            availableTimes.map((instructorGroup, groupIndex) => (
+              <View key={groupIndex} style={styles.instructorGroup}>
+                <Text style={styles.instructorGroupTitle}>
+                  {instructorGroup.instructorName}
+                </Text>
+                <View style={styles.timeGrid}>
+                  {instructorGroup.times.map((time, index) => (
+                    <TouchableOpacity
+                      key={index}
+                      style={[
+                        styles.timeButton,
+                        selectedTime === time.value && selectedButton == groupIndex &&
+                          styles.selectedTimeButton,
+                      ]}
+                      onPress={() => handleTimeSelect(time.value, groupIndex)}
+                    >
+                      <Text
+                        style={[
+                          styles.timeButtonText,
+                          selectedTime === time.value && selectedButton == groupIndex &&
+                            styles.selectedTimeButtonText,
+                        ]}
+                      >
+                        {time.label}
+                      </Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              </View>
+            ))
           ) : (
             <Text style={styles.noTimesText}>
-              No available times for selected instructor on this date
+              No available times on this date
             </Text>
           )}
         </View>
@@ -116,7 +125,17 @@ export const renderItem = (item, props) => {
           {selectedTime && (
             <Text style={styles.infoText}>
               Time:{" "}
-              {availableTimes.find((t) => t.value === selectedTime)?.label}
+              {(() => {
+                for (const group of availableTimes) {
+                  const foundTime = group.times.find(
+                    (t) => t.value === selectedTime
+                  );
+                  if (foundTime) {
+                    return foundTime.label;
+                  }
+                }
+                return selectedTime;
+              })()}
             </Text>
           )}
         </View>

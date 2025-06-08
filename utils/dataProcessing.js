@@ -1,4 +1,5 @@
 import moment from "moment";
+import _ from "lodash";
 
 export const processLessonsData = (
   lessons,
@@ -36,28 +37,44 @@ export const processLessonsData = (
     };
   }
 
-  // Update available times
-  let times = [];
-  if (selectedInstructor && selectedDate) {
-    times = lessons
-      .filter(
-        (lesson) =>
-          lesson.instructor._id === selectedInstructor &&
-          lesson.status === "available" &&
-          moment(lesson.date).format("YYYY-MM-DD") === selectedDate
-      )
-      .map((lesson) => ({
-        label: `${moment(lesson.date).format("HH:mm")} - ${moment(lesson.date)
-          .add(2, "hours")
-          .format("HH:mm")}`,
-        value: moment(lesson.date).format("YYYY-MM-DD HH:mm"),
-        sortValue: moment(lesson.date).valueOf(),
-        lessonId: lesson._id,
-      }))
-      .sort((a, b) => a.sortValue - b.sortValue);
+  let groupedTimes = [];
+  if (selectedDate) {
+    const availableLessons = lessons.filter(
+      (lesson) =>
+        (selectedInstructor === "all" ||
+          selectedInstructor === null ||
+          lesson.instructor._id === selectedInstructor) &&
+        lesson.status === "available" &&
+        moment(lesson.date).format("YYYY-MM-DD") === selectedDate
+    );
+
+    const groupedByInstructor = _.groupBy(availableLessons, "instructor._id");
+
+    groupedTimes = Object.entries(groupedByInstructor).map(
+      ([instructorId, instructorLessons]) => ({
+        instructorId,
+        instructorName: instructorLessons[0].instructor.name,
+        times: instructorLessons
+          .map((lesson) => ({
+            label: `${moment(lesson.date).format("HH:mm")} - ${moment(
+              lesson.date
+            )
+              .add(2, "hours")
+              .format("HH:mm")}`,
+            value: moment(lesson.date).format("YYYY-MM-DD HH:mm"),
+            sortValue: moment(lesson.date).valueOf(),
+            lessonId: lesson._id,
+          }))
+          .sort((a, b) => a.sortValue - b.sortValue),
+      })
+    );
+
+    groupedTimes.sort((a, b) =>
+      a.instructorName.localeCompare(b.instructorName)
+    );
   }
 
-  return { marked, times };
+  return { marked, groupedTimes };
 };
 
 export const createRenderData = (
