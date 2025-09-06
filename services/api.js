@@ -1,6 +1,7 @@
 import axios from "axios";
+import Constants from "expo-constants";
 
-const BASE_URL = "http://192.168.0.73:3000";
+const { BASE_URL } = Constants.expoConfig.extra; 
 
 //Auth service
 export const authService = {
@@ -13,6 +14,23 @@ export const authService = {
       return response.data;
     } catch (error) {
       console.log("Error logining:", error.message);
+      throw error;
+    }
+  },
+
+  async register(firstName, lastName, role, phoneNumber, email, password) {
+    try {
+      const response = await axios.post(`${BASE_URL}/auth/register`, {
+        firstName, 
+        lastName, 
+        role, 
+        phoneNumber,
+        email,
+        password,
+      });
+      return response.data;
+    } catch (error) {
+      console.log("Error registering:", error.message);
       throw error;
     }
   },

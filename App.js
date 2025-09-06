@@ -4,6 +4,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Login from "./screens/Login";
 import BookLesson from "./screens/BookLesson";
+import Register from "./screens/Register";
 import { authService } from "./services/api";
 
 const Stack = createStackNavigator();
@@ -21,7 +22,11 @@ export default function App() {
         const storedUser = await AsyncStorage.getItem("user");
         if (storedToken && storedRefreshToken && storedUser) {
           const response = await authService.refreshToken(storedRefreshToken);
-          const { token: newToken, refreshToken: newRefreshToken, user: newUser } = response;
+          const {
+            token: newToken,
+            refreshToken: newRefreshToken,
+            user: newUser,
+          } = response;
           await AsyncStorage.setItem("token", newToken);
           await AsyncStorage.setItem("refreshToken", newRefreshToken);
           await AsyncStorage.setItem("user", JSON.stringify(newUser));
@@ -70,6 +75,8 @@ export default function App() {
           <Stack.Screen name="Login">
             {() => <Login onLogin={handleLogin} />}
           </Stack.Screen>
+        ) : user.role === "admin" ? (
+          <Stack.Screen name="Register">{() => <Register />}</Stack.Screen>
         ) : (
           <Stack.Screen name="Book">
             {() => (

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, TextInput, TouchableOpacity, StyleSheet, Alert, Text } from "react-native";
+import { View, TextInput, TouchableOpacity, Alert, Text } from "react-native";
 import { authService } from "../services/api";
 import { styles } from "../styles/LoginStyles";
 
@@ -14,14 +14,15 @@ const Login = ({ onLogin }) => {
       const response = await authService.login(email, password);
       onLogin({ token: response.token, user: response.user, refreshToken: response.refreshToken, });
     } catch (error) {
-      setError(error.message || "Failed to login");
-      Alert.alert("Error", error.message || "Failed to login");
+      const errorMessage = error.response?.data?.message || error.message || "Failed to login";
+      setError(errorMessage);
+      Alert.alert("Error", errorMessage);
     }
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Login</Text>
+      <Text style={styles.title}>DriveOn</Text>
 
       <TextInput
         style={styles.input}
@@ -45,6 +46,7 @@ const Login = ({ onLogin }) => {
       <TouchableOpacity style={styles.button} onPress={handleLogin}>
         <Text style={styles.buttonText}>Log In</Text>
       </TouchableOpacity>
+      {error && <Text style={styles.error}>{error}</Text>}
     </View>
   );
 };

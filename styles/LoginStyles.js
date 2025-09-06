@@ -42,4 +42,29 @@ export const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "600",
   },
+  pickerContainer: {
+    marginBottom: 20,
+  },
+  picker: {
+    minHeight: 50,
+    borderWidth: 1,
+    borderColor: "#e1e8ed",
+    borderRadius: 8,
+    backgroundColor: "#ffffff",
+  },
+  dropDown: {
+    borderWidth: 1,
+    borderColor: "#e1e8ed",
+    borderRadius: 8,
+    backgroundColor: "#ffffff",
+  },
+  error: {
+    color: "#D32F2F", 
+    fontSize: 16, 
+    fontWeight: "bold", 
+    textAlign: "center",
+    marginTop: 10, 
+    marginBottom: 10, 
+    paddingHorizontal: 15, 
+  },
 });
