@@ -1,7 +1,7 @@
 import axios from "axios";
 import Constants from "expo-constants";
 
-const { BASE_URL } = Constants.expoConfig.extra; 
+const { BASE_URL } = Constants.expoConfig.extra;
 
 //Auth service
 export const authService = {
@@ -21,9 +21,9 @@ export const authService = {
   async register(firstName, lastName, role, phoneNumber, email, password) {
     try {
       const response = await axios.post(`${BASE_URL}/auth/register`, {
-        firstName, 
-        lastName, 
-        role, 
+        firstName,
+        lastName,
+        role,
         phoneNumber,
         email,
         password,
@@ -35,14 +35,17 @@ export const authService = {
     }
   },
 
-  async validateToken(token){
+  async validateToken(token) {
     try {
       const response = await axios.post(`${BASE_URL}/auth/validate-token`, {
-        token
-      }) 
-      return response.data
+        token,
+      });
+      return response.data;
     } catch (error) {
-      console.log("Token validation error:", error.response?.data || error.message);
+      console.log(
+        "Token validation error:",
+        error.response?.data || error.message
+      );
       throw error;
     }
   },
@@ -50,7 +53,7 @@ export const authService = {
   async refreshToken(refreshToken) {
     try {
       const response = await axios.post(`${BASE_URL}/auth/refresh-token`, {
-        refreshToken
+        refreshToken,
       });
       return response.data;
     } catch (error) {
@@ -100,12 +103,32 @@ export const lessonService = {
           studentId,
         },
         {
-          headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
         }
       );
       return response.data;
     } catch (error) {
       console.log("Error booking lesson:", error.message);
+      throw error;
+    }
+  },
+
+  async getInstructorsLessons(token, instructorId) {
+    try {
+      const response = await axios.get(
+        `${BASE_URL}/lessons/instructors`,
+        {
+          params: { instructorId },
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      console.log("Lessons response:", response.data);
+      return response.data;
+    } catch (error) {
+      console.log("Error fetching lessons:", error.message, error.response?.status, error.response?.data, error.toJSON ? error.toJSON() : error);
       throw error;
     }
   },

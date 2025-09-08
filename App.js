@@ -5,6 +5,7 @@ import * as SecureStore from "expo-secure-store";
 import Login from "./screens/Login";
 import BookLesson from "./screens/BookLesson";
 import Register from "./screens/Register";
+import Schedule from "./screens/Schedule";
 import { authService } from "./services/api";
 
 const Stack = createStackNavigator();
@@ -19,14 +20,14 @@ export default function App() {
   useEffect(() => {
     const checkAndRefreshToken = async () => {
       try {
-        const storedToken = await SecureStore.getItem("token");
-        const storedRefreshToken = await SecureStore.getItem("refreshToken");
+        const storedToken = SecureStore.getItem("token");
+        const storedRefreshToken = SecureStore.getItem("refreshToken");
         if (storedToken && storedRefreshToken) {
           try {
             const response = await authService.refreshToken(storedRefreshToken);
             const { token: newToken, refreshToken: newRefreshToken } = response;
-            await SecureStore.setItem("token", newToken);
-            await SecureStore.setItem("refreshToken", newRefreshToken);
+            SecureStore.setItem("token", newToken);
+            SecureStore.setItem("refreshToken", newRefreshToken);
             setToken(newToken);
             setRefreshToken(newRefreshToken);
           } catch (error) {
@@ -87,7 +88,11 @@ export default function App() {
           <Stack.Screen name="Register">{() => <Register />}</Stack.Screen>
         ) : tokenRole === "student" ? (
           <Stack.Screen name="Book">
-            {() => <BookLesson token={token} userId={userId} />}
+            {() => <BookLesson token={token} userId={userId} userRole={tokenRole}/>}
+          </Stack.Screen>
+        ) : tokenRole === "instructor" ? (
+          <Stack.Screen name="Schedule">
+            {() => <Schedule token={token} userId={userId} userRole={tokenRole}/>}
           </Stack.Screen>
         ) : (
           <Stack.Screen name="Login">

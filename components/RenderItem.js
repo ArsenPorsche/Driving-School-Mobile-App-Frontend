@@ -26,6 +26,9 @@ export const renderItem = (item, props) => {
     case "header":
       return <Text style={styles.header}>Choose Instructor and Date</Text>;
 
+    case "instructorsHeader":
+      return <Text style={styles.header}>Check your Schedule</Text>;
+
     case "instructor":
       return (
         <View style={[styles.pickerContainer, { zIndex: 1000 }]}>
@@ -77,12 +80,17 @@ export const renderItem = (item, props) => {
                           styles.selectedTimeButton,
                       ]}
                       activeOpacity={1}
-                      onPress={() => handleTimeSelect(time.value, instructorGroup.instructorId)}
+                      onPress={() =>
+                        handleTimeSelect(
+                          time.value,
+                          instructorGroup.instructorId
+                        )
+                      }
                     >
                       <Text
                         style={[
                           styles.timeButtonText,
-                          selectedTime === time.value  &&
+                          selectedTime === time.value &&
                             styles.selectedTimeButtonText,
                         ]}
                       >
@@ -92,6 +100,42 @@ export const renderItem = (item, props) => {
                   ))}
                 </View>
               </View>
+            ))
+          ) : (
+            <Text style={styles.noTimesText}>
+              No available times on this date
+            </Text>
+          )}
+        </View>
+      );
+
+    case "instructorsTimes":
+      return (
+        <View style={styles.timesContainer}>
+          <Text style={styles.label}>Booked Times:</Text>
+          {availableTimes.length > 0 ? (
+            availableTimes.map((time, index) => (
+              <TouchableOpacity
+                key={index}
+                style={[
+                  styles.timeButton,
+                  selectedTime === time.value && styles.selectedTimeButton,
+                ]}
+                activeOpacity={1}
+                onPress={() =>
+                  handleTimeSelect(time.value)
+                }
+              >
+                <Text
+                  style={[
+                    styles.timeButtonText,
+                    selectedTime === time.value &&
+                      styles.selectedTimeButtonText,
+                  ]}
+                >
+                  {time.label}
+                </Text>
+              </TouchableOpacity>
             ))
           ) : (
             <Text style={styles.noTimesText}>

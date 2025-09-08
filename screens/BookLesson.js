@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { View, FlatList, Alert } from "react-native";
 import { instructorService, lessonService } from "../services/api";
-import { processLessonsData, createRenderData } from "../utils/dataProcessing";
+import { processBookingData, createRenderData } from "../utils/dataProcessing";
 import { renderItem } from "../components/RenderItem";
 import { styles } from "../styles/AppStyles";
 import moment from "moment";
 
-const BookLesson = ({ token, userId }) => {
+const BookLesson = ({ token, userId, userRole }) => {
   const [instructors, setInstructors] = useState([]);
   const [selectedInstructor, setSelectedInstructor] = useState("all");
   const [lessons, setLessons] = useState([]);
@@ -21,7 +21,7 @@ const BookLesson = ({ token, userId }) => {
   }, [token]);
 
   useEffect(() => {
-    const { marked, groupedTimes } = processLessonsData(lessons, selectedInstructor, selectedDate);
+    const { marked, groupedTimes } = processBookingData(lessons, selectedInstructor, selectedDate);
     setMarkedDates(marked);
     setAvailableTimes(groupedTimes);
   }, [lessons, selectedInstructor, selectedDate]);
@@ -54,7 +54,6 @@ const BookLesson = ({ token, userId }) => {
     if (hasAvailableLessons) {
       setSelectedDate(dateString);
       setSelectedTime(null);
-      setSelectedInstructor("all");
     } else {
       Alert.alert("No lessons available", "Please select another date.");
     }
@@ -96,7 +95,7 @@ const BookLesson = ({ token, userId }) => {
     }
   };
 
-  const renderData = createRenderData(selectedInstructor, selectedDate, selectedTime);
+  const renderData = createRenderData(selectedInstructor, selectedDate, selectedTime, userRole);
 
   const itemRenderer = (item) =>
     renderItem(item, {
