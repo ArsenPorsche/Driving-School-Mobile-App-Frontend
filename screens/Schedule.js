@@ -43,7 +43,6 @@ const Schedule = ({ navigation, token, userId, userRole }) => {
     try {
       console.log("Loading lessons for instructorId:", userId);
       const lessonsData = await lessonService.getInstructorsLessons(
-        token,
         userId
       );
       setLessons(lessonsData);
@@ -73,7 +72,7 @@ const Schedule = ({ navigation, token, userId, userRole }) => {
 
   const handleGenerateAction = async () => {
     try {
-      const lessonsDate = await lessonService.getLessonOffer(token, userId);
+      const lessonsDate = await lessonService.getLessonOffer(userId);
       setDateOffer(lessonsDate);
       if (lessonsDate === null) {
         Alert.alert("Error", "You have not free hours.");
@@ -85,7 +84,6 @@ const Schedule = ({ navigation, token, userId, userRole }) => {
 
   const handleAcceptAction = async () => {
     const lessonData = await lessonService.changeLesson(
-      token,
       selectedLesson,
       dateOffer
     );

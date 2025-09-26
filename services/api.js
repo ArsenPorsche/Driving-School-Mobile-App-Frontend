@@ -25,7 +25,7 @@ api.interceptors.response.use(
       error.response &&
       error.response.status === 401 &&
       !originalRequest._retry &&
-      !originalRequest.skipAuth 
+      !originalRequest.skipAuth
     ) {
       originalRequest._retry = true;
       const refreshToken = await SecureStore.getItemAsync("refreshToken");
@@ -53,10 +53,14 @@ api.interceptors.response.use(
 export const authService = {
   async login(email, password) {
     try {
-      const response = await api.post("/auth/login", {
-        email,
-        password,
-      }, { skipAuth: true });
+      const response = await api.post(
+        "/auth/login",
+        {
+          email,
+          password,
+        },
+        { skipAuth: true }
+      );
       return response.data;
     } catch (error) {
       console.log("Error logining:", error.message);
@@ -83,9 +87,13 @@ export const authService = {
 
   async validateToken(token) {
     try {
-      const response = await api.post("/auth/validate-token", {
-        token,
-      }, { skipAuth: true });
+      const response = await api.post(
+        "/auth/validate-token",
+        {
+          token,
+        },
+        { skipAuth: true }
+      );
       return response.data;
     } catch (error) {
       console.log(
@@ -98,9 +106,13 @@ export const authService = {
 
   async refreshToken(refreshToken) {
     try {
-      const response = await api.post("/auth/refresh-token", {
-        refreshToken,
-      }, { skipAuth: true });
+      const response = await api.post(
+        "/auth/refresh-token",
+        {
+          refreshToken,
+        },
+        { skipAuth: true }
+      );
       return response.data;
     } catch (error) {
       console.log("Error refreshing token:", error.message);
@@ -111,7 +123,7 @@ export const authService = {
 
 // Instructor service
 export const instructorService = {
-  async getInstructors(token) {
+  async getInstructors() {
     try {
       const response = await api.get("/instructors");
       console.log("Instructors response:", response.data);
@@ -125,7 +137,7 @@ export const instructorService = {
 
 // Lesson service
 export const lessonService = {
-  async getLessons(token) {
+  async getLessons() {
     try {
       const response = await api.get("/lessons");
       console.log("Lessons response:", response.data);
@@ -136,15 +148,12 @@ export const lessonService = {
     }
   },
 
-  async bookLesson(token, lessonId, studentId) {
+  async bookLesson(lessonId, studentId) {
     try {
-      const response = await api.post(
-        "/lessons/book",
-        {
-          lessonId,
-          studentId,
-        },
-      );
+      const response = await api.post("/lessons/book", {
+        lessonId,
+        studentId,
+      });
       return response.data;
     } catch (error) {
       console.log("Error booking lesson:", error.message);
@@ -152,50 +161,88 @@ export const lessonService = {
     }
   },
 
-  async getInstructorsLessons(token, instructorId) {
+  async getInstructorsLessons(instructorId) {
     try {
-      const response = await api.get(
-        "/lessons/instructors",
-        {
-          params: { instructorId },
-        }
-      );
+      const response = await api.get("/lessons/instructors", {
+        params: { instructorId },
+      });
       console.log("Lessons response:", response.data);
       return response.data;
     } catch (error) {
-      console.log("Error fetching lessons:", error.message, error.response?.status, error.response?.data, error.toJSON ? error.toJSON() : error);
+      console.log(
+        "Error fetching lessons:",
+        error.message,
+        error.response?.status,
+        error.response?.data,
+        error.toJSON ? error.toJSON() : error
+      );
       throw error;
     }
   },
 
-  async getLessonOffer(token, instructorId) {
+  async getLessonOffer(instructorId) {
     try {
-      const response = await api.get(
-        "/lessons/offer",
-        {
-          params: { instructorId },
-        }
-      );
+      const response = await api.get("/lessons/offer", {
+        params: { instructorId },
+      });
       console.log("Lessons response:", response.data);
       return response.data;
     } catch (error) {
-      console.log("Error fetching lessons:", error.message, error.response?.status, error.response?.data, error.toJSON ? error.toJSON() : error);
+      console.log(
+        "Error fetching lessons:",
+        error.message,
+        error.response?.status,
+        error.response?.data,
+        error.toJSON ? error.toJSON() : error
+      );
       throw error;
     }
   },
 
-  async changeLesson(token, oldLessonId, newDate) {
+  async changeLesson(oldLessonId, newDate) {
     try {
-      const response = await api.post(
-        "/lessons/change",
-        {
-          oldLessonId,
-          newDate,
-        },
-      );
+      const response = await api.post("/lessons/change", {
+        oldLessonId,
+        newDate,
+      });
       return response.data;
     } catch (error) {
       console.log("Error changing lesson:", error.message);
+      throw error;
+    }
+  },
+
+  async purchaseItems(userId, items) {
+    try {
+      const purchaseItems = items.map((item) => {
+        const result = {
+          type: item.type || (item.id.includes("exam") ? "exam" : "lesson"),
+          quantity: (item.baseQuantity || 1) * (item.qty || 1),
+        };
+        return result;
+      });
+
+      const response = await api.post("/lessons/purchase", {
+        userId,
+        items: purchaseItems,
+      });
+
+      return response.data;
+    } catch (error) {
+      console.log("Error purchasing items:", error.message);
+      throw error;
+    }
+  },
+
+  async getPurchasedLessons(userId) {
+    try {
+      const response = await api.get("/lessons/purchased", {
+        params: { userId },
+      });
+      console.log("Lessons response:", response.data);
+      return response.data;
+    } catch (error) {
+      console.log("Error fetching lessons:", error.message);
       throw error;
     }
   },

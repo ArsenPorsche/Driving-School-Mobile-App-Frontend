@@ -29,7 +29,7 @@ const BookLesson = ({ navigation, token, userId, userRole }) => {
 
   const loadInitialData = async () => {
     try {
-      const instructorsData = await instructorService.getInstructors(token);
+      const instructorsData = await instructorService.getInstructors();
       if (Array.isArray(instructorsData)) {
         const instructorOptions = [
           { label: "All Instructors", value: "all" },
@@ -40,7 +40,7 @@ const BookLesson = ({ navigation, token, userId, userRole }) => {
         ];
         setInstructors(instructorOptions);
       }
-      const lessonsData = await lessonService.getLessons(token);
+      const lessonsData = await lessonService.getLessons();
       setLessons(lessonsData);
     } catch (error) {
       Alert.alert("Error", "Failed to load data. Please try again.");
@@ -72,7 +72,7 @@ const BookLesson = ({ navigation, token, userId, userRole }) => {
       );
       if (lesson) {
         try {
-          await lessonService.bookLesson(token, lesson._id, userId);
+          await lessonService.bookLesson(lesson._id, userId);
           Alert.alert("Success", "Lesson booked successfully!");
           setLessons((prev) => prev.filter((l) => l._id !== lesson._id));
           setSelectedTime(null);

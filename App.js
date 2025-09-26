@@ -8,8 +8,11 @@ import Schedule from "./screens/Schedule";
 import Home from "./screens/Home";
 import BookLesson from "./screens/BookLesson";
 import Profile from "./screens/Profile";
+import Store from "./screens/Store";
+import Checkout from "./screens/Checkout";
 import { authService } from "./services/api";
 import { View, Text, ActivityIndicator } from "react-native";
+import { CartProvider } from "./context/CartContext";
 
 const Stack = createStackNavigator();
 
@@ -137,76 +140,107 @@ export default function App() {
 
   if (isLoading) {
     return (
-      <NavigationContainer>
-        <Stack.Navigator screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="Loading">
-            {() => (
-              <View
-                style={{
-                  flex: 1,
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
-                <ActivityIndicator size="large" color="#007AFF" />
-                <Text style={{ marginTop: 20, fontSize: 16 }}>Loading...</Text>
-              </View>
-            )}
-          </Stack.Screen>
-        </Stack.Navigator>
-      </NavigationContainer>
+      <CartProvider>
+        <NavigationContainer>
+          <Stack.Navigator screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="Loading">
+              {() => (
+                <View
+                  style={{
+                    flex: 1,
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  <ActivityIndicator size="large" color="#007AFF" />
+                  <Text style={{ marginTop: 20, fontSize: 16 }}>
+                    Loading...
+                  </Text>
+                </View>
+              )}
+            </Stack.Screen>
+          </Stack.Navigator>
+        </NavigationContainer>
+      </CartProvider>
     );
   }
 
   return (
-    <NavigationContainer>
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
-        {tokenRole === "admin" ? (
-          <Stack.Screen name="Register">{() => <Register />}</Stack.Screen>
-        ) : tokenRole === "student" ? (
-          <>
-            <Stack.Screen name="Home">
-              {(props) => <Home {...props} tokenRole={tokenRole} />}
+    <CartProvider>
+      <NavigationContainer>
+        <Stack.Navigator screenOptions={{ headerShown: false }}>
+          {tokenRole === "admin" ? (
+            <Stack.Screen name="Register">{() => <Register />}</Stack.Screen>
+          ) : tokenRole === "student" ? (
+            <>
+              <Stack.Screen name="Home">
+                {(props) => <Home {...props} token={token} userId={userId} tokenRole={tokenRole} />}
+              </Stack.Screen>
+              <Stack.Screen name="Store">
+                {(props) => <Store {...props} tokenRole={tokenRole} />}
+              </Stack.Screen>
+              <Stack.Screen name="Checkout">
+                {(props) => (
+                  <Checkout
+                    {...props}
+                    token={token}
+                    userId={userId}
+                    tokenRole={tokenRole}
+                  />
+                )}
+              </Stack.Screen>
+              <Stack.Screen name="BookLesson">
+                {(props) => (
+                  <BookLesson
+                    {...props}
+                    token={token}
+                    userId={userId}
+                    userRole={tokenRole}
+                  />
+                )}
+              </Stack.Screen>
+              <Stack.Screen name="Profile">
+                {(props) => (
+                  <Profile
+                    {...props}
+                    tokenRole={tokenRole}
+                    handleLogout={handleLogout}
+                  />
+                )}
+              </Stack.Screen>
+            </>
+          ) : tokenRole === "instructor" ? (
+            <>
+              <Stack.Screen name="Home">
+                {(props) => <Home {...props} tokenRole={tokenRole} />}
+              </Stack.Screen>
+              <Stack.Screen name="Schedule">
+                {(props) => (
+                  <Schedule
+                    {...props}
+                    token={token}
+                    userId={userId}
+                    userRole={tokenRole}
+                  />
+                )}
+              </Stack.Screen>
+              <Stack.Screen name="Profile">
+                {(props) => (
+                  <Profile
+                    {...props}
+                    tokenRole={tokenRole}
+                    handleLogout={handleLogout}
+                  />
+                )}
+              </Stack.Screen>
+            </>
+          ) : (
+            <Stack.Screen name="Login">
+              {() => <Login onLogin={handleLogin} />}
             </Stack.Screen>
-            <Stack.Screen name="BookLesson">
-              {(props) => (
-                <BookLesson
-                  {...props}
-                  token={token}
-                  userId={userId}
-                  userRole={tokenRole}
-                />
-              )}
-            </Stack.Screen>
-            <Stack.Screen name="Profile">
-              {(props) => <Profile {...props} tokenRole={tokenRole} handleLogout={handleLogout} />}
-            </Stack.Screen>
-          </>
-        ) : tokenRole === "instructor" ? (
-          <>
-            <Stack.Screen name="Home">
-              {(props) => <Home {...props} tokenRole={tokenRole} />}
-            </Stack.Screen>
-            <Stack.Screen name="Schedule">
-              {(props) => (
-                <Schedule
-                  {...props}
-                  token={token}
-                  userId={userId}
-                  userRole={tokenRole}
-                />
-              )}
-            </Stack.Screen>
-            <Stack.Screen name="Profile">
-              {(props) => <Profile {...props} tokenRole={tokenRole} handleLogout={handleLogout} />}
-            </Stack.Screen>
-          </>
-        ) : (
-          <Stack.Screen name="Login">
-            {() => <Login onLogin={handleLogin} />}
-          </Stack.Screen>
-        )}
-      </Stack.Navigator>
-    </NavigationContainer>
+          )}
+        </Stack.Navigator>
+      </NavigationContainer>
+    </CartProvider>
   );
 }
