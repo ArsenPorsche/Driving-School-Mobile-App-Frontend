@@ -26,6 +26,7 @@ export const renderItem = (item, props) => {
 
   switch (item.type) {
     case "header":
+      const headerTitle = item.lessonType === "exam" ? "Book an Exam" : "Book a Lesson";
       return (
         <View style={styles.header}>
           <TouchableOpacity
@@ -34,7 +35,7 @@ export const renderItem = (item, props) => {
           >
             <Ionicons name="chevron-back" size={24} color="#2d4150" />
           </TouchableOpacity>
-          <Text style={styles.headerText}>Book a Lesson</Text>
+          <Text style={styles.headerText}>{headerTitle}</Text>
           <View style={{ width: 24 }} />
         </View>
       );
@@ -153,8 +154,8 @@ export const renderItem = (item, props) => {
                         onPress={() =>
                           handleTimeSelect(
                             time.value,
-                            time.lessonId
-                            //statusGroup.statusName
+                            time.lessonId,
+                            time
                           )
                         }
                       >
@@ -181,10 +182,11 @@ export const renderItem = (item, props) => {
       );
 
     case "button":
+      const buttonTitle = item.lessonType === "exam" ? "Book Exam" : "Book Lesson";
       return (
         <View style={styles.buttonContainer}>
           <Button
-            title="Book Lesson"
+            title={buttonTitle}
             onPress={handleBookLesson}
             color="#007AFF"
           />

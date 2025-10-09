@@ -30,11 +30,11 @@ export default function App() {
       try {
         setIsLoading(true);
 
-        // const storedToken = await SecureStore.getItemAsync("token");
-        // const storedRefreshToken = await SecureStore.getItemAsync(
-        //   "refreshToken"
-        // );
-        // const storedUser = await SecureStore.getItemAsync("user");
+        const storedToken = await SecureStore.getItemAsync("token");
+        const storedRefreshToken = await SecureStore.getItemAsync(
+          "refreshToken"
+        );
+        const storedUser = await SecureStore.getItemAsync("user");
 
         console.log("Stored token:", storedToken ? "exists" : "not found");
         console.log(

@@ -218,9 +218,12 @@ export const productService = {
 
 // Lesson service
 export const lessonService = {
-  async getLessons() {
+  async getLessons(params = {}) {
     try {
-      const response = await api.get("/lessons");
+      const { type = "lesson", ...otherParams } = params;
+      const response = await api.get("/lessons", { 
+        params: { type, ...otherParams } 
+      });
       console.log("Lessons response:", response.data);
       return response.data;
     } catch (error) {

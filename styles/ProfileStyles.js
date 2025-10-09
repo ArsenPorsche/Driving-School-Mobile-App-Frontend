@@ -14,11 +14,11 @@ export const profileStyles = StyleSheet.create({
     borderColor: "#e1e8ed",
   },
   headerText: {
-    fontSize: 24,
-    fontWeight: "bold",
+    fontSize: 20,
+    fontWeight: "700",
     marginBottom: 0,
     textAlign: "center",
-    color: "#2d4150",
+    color: "#1f2937",
   },
   menuItem: {
     paddingVertical: 20,

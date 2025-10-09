@@ -28,7 +28,7 @@ const Booking = ({ navigation, tokenRole }) => {
 
   const handleLessonBooking = () => {
     if (balance.purchasedLessons > 0) {
-      navigation.navigate("BookLesson");
+      navigation.navigate("BookLesson", { type: "lesson" });
     } else {
       Alert.alert(
         "You have no purchased lessons",
@@ -39,7 +39,7 @@ const Booking = ({ navigation, tokenRole }) => {
 
   const handleExamBooking = () => {
     if (balance.purchasedExams > 0) {
-      navigation.navigate("BookExam");
+      navigation.navigate("BookLesson", { type: "exam" });
     } else {
       Alert.alert(
         "You have no purchased exams",

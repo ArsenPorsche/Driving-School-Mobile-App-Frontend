@@ -22,6 +22,7 @@ const Schedule = ({ navigation, token, userId, userRole }) => {
   const [lessons, setLessons] = useState([]);
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedTime, setSelectedTime] = useState(null);
+  const [selectedTimeInfo, setSelectedTimeInfo] = useState(null);
   const [availableTimes, setAvailableTimes] = useState([]);
   const [markedDates, setMarkedDates] = useState({});
   const [isTimeMenuVisible, setIsTimeMenuVisible] = useState(false);
@@ -61,10 +62,11 @@ const Schedule = ({ navigation, token, userId, userRole }) => {
     }
   };
 
-  const handleTimeSelect = (timeValue, lessonId) => {
+  const handleTimeSelect = (timeValue, lessonId, timeInfo = null) => {
     setSelectedTime(timeValue);
     setSelectedLesson(lessonId);
     setSelectedTimeForMenu(timeValue);
+    setSelectedTimeInfo(timeInfo);
     setIsTimeMenuVisible(true);
   };
 
@@ -102,6 +104,7 @@ const Schedule = ({ navigation, token, userId, userRole }) => {
 
   const handleCloseAction = () => {
     setSelectedTime(null);
+    setSelectedTimeInfo(null);
     setIsTimeMenuVisible(false);
     setDateOffer(null);
   };
@@ -141,6 +144,18 @@ const Schedule = ({ navigation, token, userId, userRole }) => {
               <Text style={styles.modalText}>
                 Selected Time: {formatDate(selectedTimeForMenu)}
               </Text>
+              {selectedTimeInfo && (
+                <>
+                  <Text style={styles.modalText}>
+                    Type: {selectedTimeInfo.lessonType === "exam" ? "Exam" : "Lesson"}
+                  </Text>
+                  {selectedTimeInfo.studentName && (
+                    <Text style={styles.modalText}>
+                      Student: {selectedTimeInfo.studentName}
+                    </Text>
+                  )}
+                </>
+              )}
               <TouchableOpacity
                 style={styles.modalButton}
                 onPress={handleGenerateAction}

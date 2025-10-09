@@ -136,6 +136,8 @@ export const processScheduleData = (lessons, selectedDate) => {
             value: moment(lesson.date).format("YYYY-MM-DD HH:mm"),
             sortValue: moment(lesson.date).valueOf(),
             lessonId: lesson._id,
+            lessonType: lesson.type, // Add lesson type
+            studentName: lesson.student ? `${lesson.student.firstName} ${lesson.student.lastName}` : null,
           }))
           .sort((a, b) => a.sortValue - b.sortValue),
       })
@@ -148,13 +150,14 @@ export const createRenderData = (
   selectedInstructor,
   selectedDate,
   selectedTime,
-  userRole
+  userRole,
+  lessonType = "lesson"
 ) => {
   let data = null;
   switch (userRole) {
     case "instructor":
       data = [
-        { type: "instructorsHeader", id: "instructorsHeader" },
+        { type: "instructorsHeader", id: "instructorsHeader", lessonType },
         { type: "calendar", id: "calendar" },
       ];
 
@@ -164,7 +167,7 @@ export const createRenderData = (
       break;
     case "student":
       data = [
-        { type: "header", id: "header" },
+        { type: "header", id: "header", lessonType },
         { type: "instructor", id: "instructor" },
         { type: "calendar", id: "calendar" },
       ];
@@ -173,7 +176,7 @@ export const createRenderData = (
         data.push({ type: "times", id: "times" });
 
         if (selectedTime) {
-          data.push({ type: "button", id: "button" });
+          data.push({ type: "button", id: "button", lessonType });
         }
 
         data.push({ type: "info", id: "info" });

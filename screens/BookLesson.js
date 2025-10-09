@@ -7,7 +7,7 @@ import { styles } from "../styles/AppStyles";
 import NavBar from "../components/NavBar";
 import moment from "moment";
 
-const BookLesson = ({ navigation, token, userRole }) => {
+const BookLesson = ({ navigation, token, userRole, route }) => {
   const [instructors, setInstructors] = useState([]);
   const [selectedInstructor, setSelectedInstructor] = useState("all");
   const [lessons, setLessons] = useState([]);
@@ -16,6 +16,8 @@ const BookLesson = ({ navigation, token, userRole }) => {
   const [selectedTime, setSelectedTime] = useState(null);
   const [openInstructorDropdown, setOpenInstructorDropdown] = useState(false);
   const [markedDates, setMarkedDates] = useState({});
+  
+  const lessonType = route?.params?.type || "lesson";
 
   useEffect(() => {
     loadInitialData();
@@ -40,7 +42,7 @@ const BookLesson = ({ navigation, token, userRole }) => {
         ];
         setInstructors(instructorOptions);
       }
-      const lessonsData = await lessonService.getLessons();
+      const lessonsData = await lessonService.getLessons({ type: lessonType });
       setLessons(lessonsData);
     } catch (error) {
       Alert.alert("Error", "Failed to load data. Please try again.");
@@ -89,7 +91,7 @@ const BookLesson = ({ navigation, token, userRole }) => {
   };
 
 
-  const renderData = createRenderData(selectedInstructor, selectedDate, selectedTime, userRole);
+  const renderData = createRenderData(selectedInstructor, selectedDate, selectedTime, userRole, lessonType);
 
   const itemRenderer = (item) =>
     renderItem(item, {
