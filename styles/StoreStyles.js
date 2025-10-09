@@ -9,7 +9,8 @@ export const storeStyles = StyleSheet.create({
   },
   scrollContent: {
     paddingTop: 0,
-    paddingBottom: 100, // space for navbar
+    paddingHorizontal: 20,
+    paddingBottom: 100,
   },
   header: {
     fontSize: 20,
@@ -18,41 +19,35 @@ export const storeStyles = StyleSheet.create({
     marginBottom: 16,
     color: "#1f2937",
   },
-  introBox: {
+  description: {
     backgroundColor: "#fff",
-    paddingVertical: 16,
-    paddingHorizontal: 16,
-    borderTopWidth: 1,
-    borderBottomWidth: 1,
-    borderColor: "#e5e7eb",
-    marginBottom: 12,
-  },
-  introBold: {
-    fontWeight: "700",
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 24,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
+    fontSize: 14,
+    color: "#6b7280",
     textAlign: "center",
-    marginBottom: 4,
-    color: "#111827",
-  },
-  introText: {
-    textAlign: "center",
-    color: "#374151",
+    lineHeight: 20,
   },
   listContent: {
-    paddingHorizontal: 16,
     paddingBottom: 24,
   },
   item: {
     backgroundColor: "#fff",
     borderRadius: 8,
     paddingVertical: 14,
-    paddingHorizontal: 14,
+    paddingHorizontal: 16,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-  },
-  itemHighlighted: {
-    borderWidth: 2,
-    borderColor: "#1d4ed8",
   },
   itemLeft: {
     flex: 1,
@@ -92,7 +87,7 @@ export const storeStyles = StyleSheet.create({
   floatingCart: {
     position: "absolute",
     right: 16,
-    bottom: 80, // above the NavBar
+    bottom: 80,
     width: 56,
     height: 56,
     borderRadius: 28,

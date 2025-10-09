@@ -2,6 +2,7 @@ import React from "react";
 import { View, Text, Button, TouchableOpacity } from "react-native";
 import { Calendar } from "react-native-calendars";
 import DropDownPicker from "react-native-dropdown-picker";
+import { Ionicons } from "@expo/vector-icons";
 import moment from "moment";
 import { styles } from "../styles/AppStyles";
 import { calendarTheme } from "../config/calendarConfig";
@@ -20,14 +21,32 @@ export const renderItem = (item, props) => {
     handleTimeSelect,
     handleBookLesson,
     selectedDate,
+    navigation,
   } = props;
 
   switch (item.type) {
     case "header":
-      return <Text style={styles.header}>Choose Instructor and Date</Text>;
+      return (
+        <View style={styles.header}>
+          <TouchableOpacity
+            style={styles.backBtn}
+            onPress={() => navigation.goBack()}
+          >
+            <Ionicons name="chevron-back" size={24} color="#2d4150" />
+          </TouchableOpacity>
+          <Text style={styles.headerText}>Book a Lesson</Text>
+          <View style={{ width: 24 }} />
+        </View>
+      );
 
     case "instructorsHeader":
-      return <Text style={styles.header}>Check your Schedule</Text>;
+      return (
+        <View style={styles.header}>
+          <View style={{ width: 24 }} />
+          <Text style={styles.headerText}>Check your Schedule</Text>
+          <View style={{ width: 24 }} />
+        </View>
+      );
 
     case "instructor":
       return (

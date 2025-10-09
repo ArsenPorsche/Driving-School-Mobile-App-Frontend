@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, FlatList, Alert } from "react-native";
+import { View, FlatList, Alert, TouchableOpacity, Text } from "react-native";
 import { instructorService, lessonService } from "../services/api";
 import { processBookingData, createRenderData } from "../utils/dataProcessing";
 import { renderItem } from "../components/RenderItem";
@@ -78,6 +78,7 @@ const BookLesson = ({ navigation, token, userRole }) => {
           setSelectedTime(null);
           setSelectedDate(null);
           setSelectedInstructor("all");
+          navigation.navigate("Booking");
         } catch (error) {
           Alert.alert("Error", error.message || "Failed to book lesson");
         }
@@ -104,6 +105,7 @@ const BookLesson = ({ navigation, token, userRole }) => {
       handleTimeSelect,
       handleBookLesson,
       selectedDate,
+      navigation,
     });
 
   return (

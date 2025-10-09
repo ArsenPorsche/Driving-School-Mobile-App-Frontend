@@ -10,7 +10,7 @@ const NavBar = ({ role, navigation }) => (
     </TouchableOpacity>
     {role === "student" && (
       <>
-        <TouchableOpacity onPress={() => navigation.navigate("BookLesson")}>
+        <TouchableOpacity onPress={() => navigation.navigate("Booking")}>
           <Ionicons name="calendar-outline" size={28} />
         </TouchableOpacity>
         <TouchableOpacity onPress={() => navigation.navigate("Store")}>

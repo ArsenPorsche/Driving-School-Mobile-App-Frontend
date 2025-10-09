@@ -6,15 +6,38 @@ export const styles = StyleSheet.create({
     backgroundColor: "#f8f9fa",
     paddingTop: 60,
   },
+  header: {
+    height: 56,
+    paddingHorizontal: 16,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    borderBottomWidth: 1,
+    borderColor: "#e1e8ed",
+    marginHorizontal: -20,
+    marginTop: -20,
+    marginBottom: 20,
+  },
+  backBtn: {
+    width: 24,
+    height: 24,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  headerText: {
+    fontSize: 20,
+    fontWeight: "700",
+    color: "#2d4150",
+  },
   flatListContent: {
     padding: 20,
   },
-  header: {
-    fontSize: 24,
-    fontWeight: "bold",
+  sectionHeader: {
+    fontSize: 18,
+    fontWeight: "700",
+    color: "#2d4150",
     marginBottom: 20,
     textAlign: "center",
-    color: "#2d4150",
   },
   label: {
     fontSize: 16,

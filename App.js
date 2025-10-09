@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { View, Text, ActivityIndicator } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import * as SecureStore from "expo-secure-store";
@@ -6,12 +7,12 @@ import Login from "./screens/Login";
 import Register from "./screens/Register";
 import Schedule from "./screens/Schedule";
 import Home from "./screens/Home";
+import Booking from "./screens/Booking";
 import BookLesson from "./screens/BookLesson";
 import Profile from "./screens/Profile";
 import Store from "./screens/Store";
 import Checkout from "./screens/Checkout";
 import { authService } from "./services/api";
-import { View, Text, ActivityIndicator } from "react-native";
 import { CartProvider } from "./context/CartContext";
 
 const Stack = createStackNavigator();
@@ -29,11 +30,11 @@ export default function App() {
       try {
         setIsLoading(true);
 
-        const storedToken = await SecureStore.getItemAsync("token");
-        const storedRefreshToken = await SecureStore.getItemAsync(
-          "refreshToken"
-        );
-        const storedUser = await SecureStore.getItemAsync("user");
+        // const storedToken = await SecureStore.getItemAsync("token");
+        // const storedRefreshToken = await SecureStore.getItemAsync(
+        //   "refreshToken"
+        // );
+        // const storedUser = await SecureStore.getItemAsync("user");
 
         console.log("Stored token:", storedToken ? "exists" : "not found");
         console.log(
@@ -187,6 +188,9 @@ export default function App() {
               </Stack.Screen>
               <Stack.Screen name="Checkout">
                 {(props) => <Checkout {...props} tokenRole={tokenRole} />}
+              </Stack.Screen>
+              <Stack.Screen name="Booking">
+                {(props) => <Booking {...props} tokenRole={tokenRole} />}
               </Stack.Screen>
               <Stack.Screen name="BookLesson">
                 {(props) => (
