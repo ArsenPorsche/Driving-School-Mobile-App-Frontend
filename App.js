@@ -15,9 +15,8 @@ import Profile from "./screens/Profile";
 import Store from "./screens/Store";
 import Checkout from "./screens/Checkout";
 import EditProfile from "./screens/EditProfile";
-import Chat from "./screens/Chat";
-import InstructorChats from "./screens/InstructorChats";
-import InstructorChat from "./screens/InstructorChat";
+import Chats from "./screens/Chats";
+import ChatThread from "./screens/ChatThread";
 import { authService, userService } from "./services/api";
 import { CartProvider } from "./context/CartContext";
 
@@ -33,30 +32,19 @@ Notifications.setNotificationHandler({
 
 async function getExpoPushToken() {
   try {
-    console.log("[getExpoPushToken] called");
-    if (!Device.isDevice) {
-      console.log("[getExpoPushToken] Not a physical device");
-      return null;
-    }
+    if (!Device.isDevice) return null;
     const { status: existingStatus } = await Notifications.getPermissionsAsync();
-    console.log("[getExpoPushToken] Existing status:", existingStatus);
     let finalStatus = existingStatus;
     if (existingStatus !== "granted") {
       const { status } = await Notifications.requestPermissionsAsync();
       finalStatus = status;
-      console.log("[getExpoPushToken] Requested status:", status);
     }
-    if (finalStatus !== "granted") {
-      console.log("[getExpoPushToken] Permission not granted");
-      return null;
-    }
+    if (finalStatus !== "granted") return null;
     const tokenData = await Notifications.getExpoPushTokenAsync({
       projectId: "1fdd220b-4a71-47a8-a6e9-c665a56d6b2d"
     });
-    console.log("[getExpoPushToken] Got tokenData:", tokenData);
     return tokenData?.data || null;
   } catch (e) {
-    console.log("[getExpoPushToken] Error:", e.message);
     return null;
   }
 }
@@ -80,11 +68,6 @@ export default function App() {
         );
         const storedUser = await SecureStore.getItemAsync("user");
 
-        console.log("Stored token:", storedToken ? "exists" : "not found");
-        console.log(
-          "Stored refresh token:",
-          storedRefreshToken ? "exists" : "not found"
-        );
 
         if (storedToken && storedRefreshToken) {
           try {
@@ -99,12 +82,7 @@ export default function App() {
             setTokenRole(validation.role);
             setUserId(validation.id);
 
-            console.log("Token validated successfully. Role:", validation.role);
           } catch (validationError) {
-            console.log(
-              "Token validation failed, trying to refresh:",
-              validationError.message
-            );
 
             try {
               const response = await authService.refreshToken(
@@ -123,21 +101,15 @@ export default function App() {
               setTokenRole(newValidation.role);
               setUserId(newValidation.id);
 
-              console.log(
-                "Token refreshed and validated. Role:",
-                newValidation.role
-              );
             } catch (refreshError) {
               console.log("Token refresh failed:", refreshError.message);
               await handleLogout();
             }
           }
         } else {
-          console.log("No stored tokens found");
           await handleLogout();
         }
       } catch (error) {
-        console.log("Token check failed:", error.message);
         await handleLogout();
       } finally {
         setIsLoading(false);
@@ -149,15 +121,12 @@ export default function App() {
 
   useEffect(() => {
     (async () => {
-      console.log("[useEffect][pushToken] token:", token);
       if (!token) return;
       const expoToken = await getExpoPushToken();
-      console.log("[useEffect][pushToken] expoToken:", expoToken);
       if (expoToken) {
         try {
           await userService.registerPushToken(expoToken);
         } catch (e) {
-          console.log("[useEffect][pushToken] registerPushToken error:", e.message);
         }
       }
     })();
@@ -177,16 +146,13 @@ export default function App() {
       setTokenRole(validation.role);
       setUserId(validation.id);
 
-      console.log("Login successful. Role:", validation.role);
 
       try {
         const expoToken = await getExpoPushToken();
-        console.log("[handleLogin] expoToken:", expoToken);
         if (expoToken) {
           await userService.registerPushToken(expoToken);
         }
       } catch (e) {
-        console.log("[handleLogin] registerPushToken error:", e.message);
       }
     } catch (error) {
       console.log("Error saving to SecureStore:", error.message);
@@ -297,25 +263,17 @@ export default function App() {
                   />
                 )}
               </Stack.Screen>
-              <Stack.Screen name="Chat">
+              <Stack.Screen name="Chats">
                 {(props) => (
-                  <Chat
+                  <Chats
                     {...props}
                     tokenRole={tokenRole}
                   />
                 )}
               </Stack.Screen>
-              <Stack.Screen name="InstructorChats">
+              <Stack.Screen name="ChatThread">
                 {(props) => (
-                  <InstructorChats
-                    {...props}
-                    tokenRole={tokenRole}
-                  />
-                )}
-              </Stack.Screen>
-              <Stack.Screen name="InstructorChat">
-                {(props) => (
-                  <InstructorChat
+                  <ChatThread
                     {...props}
                     tokenRole={tokenRole}
                   />
@@ -353,9 +311,17 @@ export default function App() {
                   />
                 )}
               </Stack.Screen>
-              <Stack.Screen name="Chat">
+              <Stack.Screen name="Chats">
                 {(props) => (
-                  <Chat
+                  <Chats
+                    {...props}
+                    tokenRole={tokenRole}
+                  />
+                )}
+              </Stack.Screen>
+              <Stack.Screen name="ChatThread">
+                {(props) => (
+                  <ChatThread
                     {...props}
                     tokenRole={tokenRole}
                   />

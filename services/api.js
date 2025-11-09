@@ -360,77 +360,47 @@ export const lessonService = {
   },
 };
 
-// Notification service
-export const notificationService = {
-  async getNotifications(params = {}) {
+// Chat service
+export const chatService = {
+  async getChats() {
     try {
-      const response = await api.get("/notifications", { params });
-      console.log("Notifications response:", response.data);
+      const response = await api.get("/chats");
+      console.log("Chats response:", response.data);
       return response.data;
     } catch (error) {
-      console.log("Error fetching notifications:", error.message);
+      console.log("Error fetching chats:", error.message, error.response?.data);
       throw error;
     }
   },
 
-  async getInstructorChats() {
+  async getMessages(chatId, params = {}) {
     try {
-      const response = await api.get("/notifications/instructors");
-      console.log("Instructor chats response:", response.data);
+      const response = await api.get(`/chats/${chatId}/messages`, { params });
+      console.log("Chat messages response:", response.data);
       return response.data;
     } catch (error) {
-      console.log("Error fetching instructor chats:", error.message);
+      console.log("Error fetching chat messages:", error.message, error.response?.data);
       throw error;
     }
   },
 
-  async getInstructorNotifications(instructorId, params = {}) {
+  async sendMessage(partnerId, text) {
     try {
-      const response = await api.get(`/notifications/instructors/${instructorId}`, { params });
-      console.log("Instructor notifications response:", response.data);
+      const response = await api.post(`/chats/send`, { partnerId, text });
+      console.log("Send message response:", response.data);
       return response.data;
     } catch (error) {
-      console.log("Error fetching instructor notifications:", error.message);
+      console.log("Error sending message:", error.message, error.response?.data);
       throw error;
     }
   },
 
-  async markAsRead(notificationId) {
+  async markChatRead(chatId) {
     try {
-      const response = await api.patch(`/notifications/${notificationId}/read`);
+      const response = await api.patch(`/chats/${chatId}/read`);
       return response.data;
     } catch (error) {
-      console.log("Error marking notification as read:", error.message);
-      throw error;
-    }
-  },
-
-  async markAllAsRead() {
-    try {
-      const response = await api.patch("/notifications/read-all");
-      return response.data;
-    } catch (error) {
-      console.log("Error marking all notifications as read:", error.message);
-      throw error;
-    }
-  },
-
-  async markInstructorAsRead(instructorId) {
-    try {
-      const response = await api.patch(`/notifications/instructors/${instructorId}/read-all`);
-      return response.data;
-    } catch (error) {
-      console.log("Error marking instructor notifications as read:", error.message);
-      throw error;
-    }
-  },
-
-  async deleteNotification(notificationId) {
-    try {
-      const response = await api.delete(`/notifications/${notificationId}`);
-      return response.data;
-    } catch (error) {
-      console.log("Error deleting notification:", error.message);
+      console.log("Error marking chat read:", error.message, error.response?.data);
       throw error;
     }
   },

@@ -3,19 +3,21 @@ import { View, TouchableOpacity, Text } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useFocusEffect } from "@react-navigation/native";
 import { navBarStyles } from "../styles/NavBarStyles";
-import { notificationService } from "../services/api";
+import { chatService } from "../services/api";
 
 const NavBar = ({ role, navigation }) => {
-  const [unreadCount, setUnreadCount] = useState(0);
+  const [chatUnreadCount, setChatUnreadCount] = useState(0);
 
   useFocusEffect(
     React.useCallback(() => {
       const fetchUnreadCount = async () => {
         try {
-          const data = await notificationService.getNotifications({ unreadOnly: true });
-          setUnreadCount(data.unreadCount || 0);
+          // Chats unread (sum over chats)
+          const chats = await chatService.getChats();
+          const total = (chats.chats || []).reduce((sum, c) => sum + (c.unreadCount || 0), 0);
+          setChatUnreadCount(total);
         } catch (error) {
-          console.log("Error fetching unread count:", error.message);
+          console.log("Error fetching unread chats count:", error.message);
         }
       };
       fetchUnreadCount();
@@ -44,16 +46,11 @@ const NavBar = ({ role, navigation }) => {
         </TouchableOpacity>
       </>
     )}
-    <TouchableOpacity
-      onPress={() => navigation.navigate("InstructorChats")}
-      style={navBarStyles.notificationButton}
-    >
+    <TouchableOpacity onPress={() => navigation.navigate("Chats")} style={navBarStyles.notificationButton}>
       <Ionicons name="chatbubble-outline" size={28} />
-      {unreadCount > 0 && (
+      {chatUnreadCount > 0 && (
         <View style={navBarStyles.badge}>
-          <Text style={navBarStyles.badgeText}>
-            {unreadCount > 99 ? "99+" : unreadCount}
-          </Text>
+          <Text style={navBarStyles.badgeText}>{chatUnreadCount > 99 ? "99+" : chatUnreadCount}</Text>
         </View>
       )}
     </TouchableOpacity>

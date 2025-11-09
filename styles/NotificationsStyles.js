@@ -121,4 +121,74 @@ export const styles = StyleSheet.create({
     color: "#1d4ed8",
     fontWeight: "600",
   },
+  // Chat message bubbles
+  messageRow: {
+    paddingHorizontal: 20,
+    paddingVertical: 8,
+  },
+  messageBubble: {
+    paddingVertical: 10,
+    paddingHorizontal: 14,
+    borderRadius: 14,
+    maxWidth: "85%",
+  },
+  messageBubbleLeft: {
+    backgroundColor: "#fff",
+    borderColor: "#e1e8ed",
+    borderWidth: 1,
+    alignSelf: "flex-start",
+    marginVertical: 6,
+  },
+  messageBubbleRight: {
+    backgroundColor: "#dbeafe",
+    alignSelf: "flex-end",
+    marginVertical: 6,
+  },
+  messageText: {
+    fontSize: 14,
+    color: "#1f2937",
+  },
+  // Input area styles
+  inputContainer: {
+    flexDirection: "row",
+    padding: 12,
+    borderTopWidth: 1,
+    borderColor: "#e1e8ed",
+    backgroundColor: "#ffffff",
+    marginBottom: 8,
+  },
+  input: {
+    flex: 1,
+    backgroundColor: "#f8f9fa",
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    fontSize: 16,
+    color: "#1f2937",
+    borderWidth: 1,
+    borderColor: "#e1e8ed",
+  },
+  sendButton: {
+    marginLeft: 10,
+    backgroundColor: "#1d4ed8",
+    paddingHorizontal: 16,
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 8,
+  },
+  sendButtonText: {
+    color: "#ffffff",
+    fontSize: 16,
+    fontWeight: "600",
+  },
+  backBtn: {
+    position: "absolute",
+    left: 16,
+    width: 32,
+    height: 32,
+    alignItems: "center",
+    justifyContent: "center",
+    top: "50%",
+    marginTop: -16,
+  }
 });
