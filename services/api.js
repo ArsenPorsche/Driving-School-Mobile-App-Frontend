@@ -119,6 +119,28 @@ export const authService = {
       throw error;
     }
   },
+
+  async getAllUsers() {
+    try {
+      const response = await api.get("/auth/users");
+      console.log("All users response:", response.data);
+      return response.data;
+    } catch (error) {
+      console.log("Error fetching users:", error.message);
+      throw error;
+    }
+  },
+
+  async deleteUser(userId) {
+    try {
+      const response = await api.delete(`/auth/users/${userId}`);
+      console.log("Delete user response:", response.data);
+      return response.data;
+    } catch (error) {
+      console.log("Error deleting user:", error.message);
+      throw error;
+    }
+  },
 };
 
 // Instructor service
@@ -140,8 +162,10 @@ export const productService = {
   async getProducts() {
     try {
       const response = await api.get("/products");
-      console.log("Products response:", response.data);
-      return response.data;
+      const payload = response.data;
+      const list = Array.isArray(payload) ? payload : (payload?.data || []);
+      console.log("Products response (normalized):", list.length);
+      return list;
     } catch (error) {
       console.log("Error fetching products:", error.message);
       throw error;
@@ -211,6 +235,39 @@ export const productService = {
       return response.data;
     } catch (error) {
       console.log("Error fetching balance:", error.message);
+      throw error;
+    }
+  },
+
+  async createProduct(productData) {
+    try {
+      const response = await api.post("/products", productData);
+      console.log("Create product response:", response.data);
+      return response.data;
+    } catch (error) {
+      console.log("Error creating product:", error.message);
+      throw error;
+    }
+  },
+
+  async updateProduct(productId, productData) {
+    try {
+      const response = await api.put(`/products/${productId}`, productData);
+      console.log("Update product response:", response.data);
+      return response.data;
+    } catch (error) {
+      console.log("Error updating product:", error.message);
+      throw error;
+    }
+  },
+
+  async deleteProduct(productId) {
+    try {
+      const response = await api.delete(`/products/${productId}`);
+      console.log("Delete product response:", response.data);
+      return response.data;
+    } catch (error) {
+      console.log("Error deleting product:", error.message);
       throw error;
     }
   },

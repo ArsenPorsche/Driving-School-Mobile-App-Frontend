@@ -27,7 +27,7 @@ export default {
     },
     projectId: "d9c50634-741c-4ad4-8878-2aef215474d3",
     extra: {
-      BASE_URL: "http://192.168.0.214:3000",
+      BASE_URL: "http://192.168.0.96:3000",
     },
   },
 };

@@ -6,7 +6,6 @@ import * as SecureStore from "expo-secure-store";
 import * as Notifications from "expo-notifications";
 import * as Device from "expo-device";
 import Login from "./screens/Login";
-import Register from "./screens/Register";
 import Schedule from "./screens/Schedule";
 import Home from "./screens/Home";
 import Booking from "./screens/Booking";
@@ -17,6 +16,9 @@ import Checkout from "./screens/Checkout";
 import EditProfile from "./screens/EditProfile";
 import Chats from "./screens/Chats";
 import ChatThread from "./screens/ChatThread";
+import AdminHome from "./screens/AdminHome";
+import UserManagement from "./screens/UserManagement";
+import ProductManagement from "./screens/ProductManagement";
 import { authService, userService } from "./services/api";
 import { CartProvider } from "./context/CartContext";
 
@@ -207,7 +209,18 @@ export default function App() {
       <NavigationContainer>
         <Stack.Navigator screenOptions={{ headerShown: false }}>
           {tokenRole === "admin" ? (
-            <Stack.Screen name="Register">{() => <Register />}</Stack.Screen>
+            <>
+              <Stack.Screen name="AdminHome">
+                {(props) => <AdminHome {...props} handleLogout={handleLogout} />}
+              </Stack.Screen>
+              <Stack.Screen name="UserManagement">
+                {(props) => <UserManagement {...props} />}
+              </Stack.Screen>
+              <Stack.Screen name="ProductManagement">
+                {(props) => <ProductManagement {...props} />}
+              </Stack.Screen>
+        
+            </>
           ) : tokenRole === "student" ? (
             <>
               <Stack.Screen name="Home">

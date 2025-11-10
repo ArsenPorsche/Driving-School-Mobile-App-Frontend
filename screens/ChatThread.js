@@ -28,6 +28,7 @@ export default function ChatThread({ route, navigation, tokenRole }) {
   const [hasMore, setHasMore] = useState(true);
   const messageIdsRef = useRef(new Set());
   const socketRef = useRef(null);
+  const flatListRef = useRef(null);
 
   const fetchMessages = async (params = {}) => {
     try {
@@ -56,6 +57,12 @@ export default function ChatThread({ route, navigation, tokenRole }) {
           if (m._id) ids.add(String(m._id));
         }
         messageIdsRef.current = ids;
+
+        if (fetched.length > 0) {
+          setTimeout(() => {
+            flatListRef.current?.scrollToEnd({ animated: false });
+          }, 100);
+        }
       }
 
       if (fetched.length > 0) {
@@ -95,6 +102,9 @@ export default function ChatThread({ route, navigation, tokenRole }) {
             if (id && messageIdsRef.current.has(id)) return; // dedupe
             if (id) messageIdsRef.current.add(id);
             setMessages((prev) => [...prev, payload]);
+            setTimeout(() => {
+              flatListRef.current?.scrollToEnd({ animated: true });
+            }, 100);
             const senderId = payload.sender?._id || payload.sender;
             if (senderId === partnerId) {
               try { await chatService.markChatRead(chatId); } catch {}
@@ -189,6 +199,7 @@ export default function ChatThread({ route, navigation, tokenRole }) {
       </View>
 
       <FlatList
+        ref={flatListRef}
         data={messages}
         renderItem={renderMessage}
         keyExtractor={(item, idx) => item._id || String(idx)}
