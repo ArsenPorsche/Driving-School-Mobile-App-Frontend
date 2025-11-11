@@ -141,6 +141,17 @@ export const authService = {
       throw error;
     }
   },
+
+  async activateUser(userId) {
+    try {
+      const response = await api.patch(`/auth/users/${userId}/activate`);
+      console.log("Activate user response:", response.data);
+      return response.data;
+    } catch (error) {
+      console.log("Error activating user:", error.message);
+      throw error;
+    }
+  },
 };
 
 // Instructor service
@@ -155,6 +166,17 @@ export const instructorService = {
       throw error;
     }
   },
+
+  async getInstructorRating() {
+    try {
+      const response = await api.get("/instructors/rating");
+      console.log("Instructor rating response:", response.data);
+      return response.data;
+    } catch (error) {
+      console.log("Error fetching instructor rating:", error.message);
+      throw error;
+    }
+  },
 };
 
 // Product service
@@ -163,11 +185,26 @@ export const productService = {
     try {
       const response = await api.get("/products");
       const payload = response.data;
-      const list = Array.isArray(payload) ? payload : (payload?.data || []);
-      console.log("Products response (normalized):", list.length);
+      let list = Array.isArray(payload) ? payload : (payload?.data || []);
+      list = list.filter((p) => p.active !== false);
+      console.log("Products response (normalized, active only):", list.length);
       return list;
     } catch (error) {
       console.log("Error fetching products:", error.message);
+      throw error;
+    }
+  },
+
+  // Admin-only: get all products including inactive
+  async getAllProductsAdmin() {
+    try {
+      const response = await api.get("/products/all");
+      const payload = response.data;
+      const list = Array.isArray(payload) ? payload : (payload?.data || []);
+      console.log("Admin products response (all):", list.length);
+      return list;
+    } catch (error) {
+      console.log("Error fetching all products:", error.message);
       throw error;
     }
   },
@@ -264,10 +301,21 @@ export const productService = {
   async deleteProduct(productId) {
     try {
       const response = await api.delete(`/products/${productId}`);
-      console.log("Delete product response:", response.data);
+      console.log("Deactivate product response:", response.data);
       return response.data;
     } catch (error) {
       console.log("Error deleting product:", error.message);
+      throw error;
+    }
+  },
+
+  async activateProduct(productId) {
+    try {
+      const response = await api.patch(`/products/${productId}/activate`);
+      console.log("Activate product response:", response.data);
+      return response.data;
+    } catch (error) {
+      console.log("Error activating product:", error.message);
       throw error;
     }
   },
@@ -412,6 +460,50 @@ export const lessonService = {
       return response.data;
     } catch (error) {
       console.log("Error changing lesson:", error.message);
+      throw error;
+    }
+  },
+
+  async getLessonHistory() {
+    try {
+      const response = await api.get("/lessons/history");
+      console.log("Lesson history response:", response.data);
+      return response.data;
+    } catch (error) {
+      console.log("Error fetching lesson history:", error.message);
+      throw error;
+    }
+  },
+
+  async rateLesson(lessonId, rating) {
+    try {
+      const response = await api.post(`/lessons/${lessonId}/rate`, { rating });
+      console.log("Rate lesson response:", response.data);
+      return response.data;
+    } catch (error) {
+      console.log("Error rating lesson:", error.message);
+      throw error;
+    }
+  },
+
+  async getInstructorHistory() {
+    try {
+      const response = await api.get("/lessons/instructor-history");
+      console.log("Instructor history response:", response.data);
+      return response.data;
+    } catch (error) {
+      console.log("Error fetching instructor history:", error.message);
+      throw error;
+    }
+  },
+
+  async setExamResult(lessonId, wynik) {
+    try {
+      const response = await api.post(`/lessons/${lessonId}/result`, { wynik });
+      console.log("Set exam result response:", response.data);
+      return response.data;
+    } catch (error) {
+      console.log("Error setting exam result:", error.message);
       throw error;
     }
   },

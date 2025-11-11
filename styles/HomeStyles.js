@@ -78,4 +78,18 @@ export const homeStyles = StyleSheet.create({
     color: '#374151',
     marginBottom: 6,
   },
+    ratingRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 8,
+    },
+    ratingValue: {
+      fontSize: 24,
+      fontWeight: '700',
+      color: '#1a1a1a',
+    },
+    ratingCount: {
+      fontSize: 14,
+      color: '#6b7280',
+    },
 });

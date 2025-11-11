@@ -24,7 +24,7 @@ const BookLesson = ({ navigation, token, userRole, route }) => {
   }, [token]);
 
   useEffect(() => {
-    const { marked, groupedTimes } = processBookingData(lessons, selectedInstructor, selectedDate);
+     const { marked, groupedTimes } = processBookingData(lessons, selectedInstructor, selectedDate, instructors);
     setMarkedDates(marked);
     setAvailableTimes(groupedTimes);
   }, [lessons, selectedInstructor, selectedDate]);
@@ -36,8 +36,10 @@ const BookLesson = ({ navigation, token, userRole, route }) => {
         const instructorOptions = [
           { label: "All Instructors", value: "all" },
           ...instructorsData.map((instructor) => ({
-            label: instructor.name || "Unknown",
+              label: `${instructor.name || "Unknown"} ${instructor.averageRating > 0 ? ` ${instructor.averageRating.toFixed(1)} ⭐` : ''}`,
             value: instructor._id || "unknown",
+              averageRating: instructor.averageRating || 0,
+              totalRatings: instructor.totalRatings || 0,
           })),
         ];
         setInstructors(instructorOptions);

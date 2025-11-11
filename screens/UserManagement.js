@@ -39,20 +39,20 @@ const UserManagement = ({ navigation }) => {
 
   const handleDeleteUser = async (userId) => {
     Alert.alert(
-      "Delete User",
-      "Are you sure you want to delete this user?",
+      "Deactivate User",
+      "Make this user inactive? They will no longer be able to log in.",
       [
         { text: "Cancel", style: "cancel" },
         {
-          text: "Delete",
+          text: "Deactivate",
           style: "destructive",
           onPress: async () => {
             try {
               await authService.deleteUser(userId);
-              Alert.alert("Success", "User deleted successfully");
+              Alert.alert("Success", "User deactivated successfully");
               loadUsers();
             } catch (error) {
-              Alert.alert("Error", "Failed to delete user");
+              Alert.alert("Error", error.response?.data?.message || "Failed to deactivate user");
             }
           },
         },
@@ -60,24 +60,47 @@ const UserManagement = ({ navigation }) => {
     );
   };
 
-  const renderUserItem = ({ item }) => (
-    <View style={styles.userCard}>
-      <View style={styles.userInfo}>
-        <Text style={styles.userName}>{item.firstName} {item.lastName}</Text>
-        <Text style={styles.userEmail}>{item.email}</Text>
-        <Text style={styles.userRole}>Role: {item.role}</Text>
-        {item.phoneNumber && (
-          <Text style={styles.userPhone}>Phone: {item.phoneNumber}</Text>
+  const handleActivateUser = async (userId) => {
+    try {
+      await authService.activateUser(userId);
+      Alert.alert('Success','User activated successfully');
+      loadUsers();
+    } catch (e) {
+      Alert.alert('Error', e.response?.data?.message || 'Failed to activate user');
+    }
+  };
+
+  const renderUserItem = ({ item }) => {
+    const inactive = item.active === false;
+    return (
+      <View style={styles.userCard}>
+        <View style={styles.userInfo}>
+          <Text style={styles.userName}>{item.firstName} {item.lastName}</Text>
+          <Text style={styles.userEmail}>{item.email}</Text>
+          <Text style={styles.userRole}>Role: {item.role}</Text>
+          <Text style={[styles.userRole, inactive && { color: '#dc2626' }]}>Status: {inactive ? 'Inactive' : 'Active'}</Text>
+          {item.phoneNumber && (
+            <Text style={styles.userPhone}>Phone: {item.phoneNumber}</Text>
+          )}
+        </View>
+        {inactive ? (
+          <TouchableOpacity
+            style={styles.deleteButton}
+            onPress={() => handleActivateUser(item._id)}
+          >
+            <Ionicons name="refresh-circle" size={28} color="#16a34a" />
+          </TouchableOpacity>
+        ) : (
+          <TouchableOpacity
+            style={styles.deleteButton}
+            onPress={() => handleDeleteUser(item._id)}
+          >
+            <Ionicons name="remove-circle" size={24} color="#dc2626" />
+          </TouchableOpacity>
         )}
       </View>
-      <TouchableOpacity
-        style={styles.deleteButton}
-        onPress={() => handleDeleteUser(item._id)}
-      >
-        <Ionicons name="trash" size={24} color="#dc2626" />
-      </TouchableOpacity>
-    </View>
-  );
+    );
+  };
 
   return (
     <View style={styles.container}>
@@ -164,7 +187,7 @@ const UserManagement = ({ navigation }) => {
                 />
                   <TextInput
                   style={styles.input}
-                  placeholder="Password (min 6 chars)"
+                  placeholder="Password"
                   placeholderTextColor="#9CA3AF"
                   secureTextEntry
                   value={form.password}

@@ -19,6 +19,8 @@ import ChatThread from "./screens/ChatThread";
 import AdminHome from "./screens/AdminHome";
 import UserManagement from "./screens/UserManagement";
 import ProductManagement from "./screens/ProductManagement";
+import LessonHistory from "./screens/LessonHistory";
+import InstructorHistory from "./screens/InstructorHistory";
 import { authService, userService } from "./services/api";
 import { CartProvider } from "./context/CartContext";
 
@@ -276,6 +278,13 @@ export default function App() {
                   />
                 )}
               </Stack.Screen>
+              <Stack.Screen name="LessonHistory">
+                {(props) => (
+                  <LessonHistory
+                    {...props}
+                  />
+                )}
+              </Stack.Screen>
               <Stack.Screen name="Chats">
                 {(props) => (
                   <Chats
@@ -321,6 +330,13 @@ export default function App() {
                   <EditProfile
                     {...props}
                     tokenRole={tokenRole}
+                  />
+                )}
+              </Stack.Screen>
+              <Stack.Screen name="InstructorHistory">
+                {(props) => (
+                  <InstructorHistory
+                    {...props}
                   />
                 )}
               </Stack.Screen>

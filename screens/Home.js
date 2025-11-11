@@ -5,20 +5,27 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import NavBar from "../components/NavBar";
 import { homeStyles } from "../styles/HomeStyles";
-import { productService } from "../services/api";
+import { productService, instructorService } from "../services/api";
 
 const Home = ({ navigation, userId, tokenRole }) => {
   const [purchasedLessonsQty, setPurchasedLessonsQty] = useState();
   const [purchasedExamsQty, setPurchasedExamsQty] = useState();
+  const [instructorRating, setInstructorRating] = useState(null);
 
   const loadInitialData = async () => {
     try {
-      const balance = await productService.getUserBalance();
-      setPurchasedLessonsQty(balance.purchasedLessons);
-      setPurchasedExamsQty(balance.purchasedExams);
-      console.log("User balance:", balance);
+      if (tokenRole === "student") {
+        const balance = await productService.getUserBalance();
+        setPurchasedLessonsQty(balance.purchasedLessons);
+        setPurchasedExamsQty(balance.purchasedExams);
+        console.log("User balance:", balance);
+      } else if (tokenRole === "instructor") {
+        const rating = await instructorService.getInstructorRating();
+        setInstructorRating(rating);
+        console.log("Instructor rating:", rating);
+      }
     } catch (error) {
-      console.log("Error fetching user balance:", error);
+      console.log("Error fetching data:", error);
     }
   };
 
@@ -90,8 +97,20 @@ const Home = ({ navigation, userId, tokenRole }) => {
       {tokenRole === "student" && (
         <View style={homeStyles.balanceBox}>
           <Text style={homeStyles.balanceTitle}>Your Balance</Text>
-          <Text style={homeStyles.balanceLine}>Driving lessons: {purchasedLessonsQty || 0}</Text>
-          <Text style={homeStyles.balanceLine}>Practical exams: {purchasedExamsQty || 0}</Text>
+            <Text style={homeStyles.balanceLine}>Driving lessons: {purchasedLessonsQty || 0}</Text>
+            <Text style={homeStyles.balanceLine}>Practical exams: {purchasedExamsQty || 0}</Text>
+          </View>
+        )}
+
+        {tokenRole === "instructor" && instructorRating && (
+          <View style={homeStyles.balanceBox}>
+            <Text style={homeStyles.balanceTitle}>Your Rating</Text>
+            <View style={homeStyles.ratingRow}>
+              <Text style={homeStyles.ratingValue}>
+                {instructorRating.average.toFixed(1)}
+              </Text>
+              <Ionicons name="star" size={24} color="#fbbf24" />
+            </View>
         </View>
       )}
     </View>

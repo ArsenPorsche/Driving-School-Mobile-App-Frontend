@@ -33,7 +33,7 @@ export const renderItem = (item, props) => {
             style={styles.backBtn}
             onPress={() => navigation.goBack()}
           >
-            <Ionicons name="chevron-back" size={24} color="#2d4150" />
+            <Ionicons name="arrow-back" size={24} color="#2d4150" />
           </TouchableOpacity>
           <Text style={styles.headerText}>{headerTitle}</Text>
           <View style={{ width: 24 }} />

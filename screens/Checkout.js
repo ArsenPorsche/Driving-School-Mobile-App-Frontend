@@ -77,7 +77,7 @@ const Checkout = ({ navigation, tokenRole }) => {
           onPress={() => navigation.goBack()}
           style={checkoutStyles.backBtn}
         >
-          <Ionicons name="chevron-back" size={24} color="#2d4150" />
+          <Ionicons name="arrow-back" size={24} color="#2d4150" />
         </TouchableOpacity>
         <Text style={checkoutStyles.headerText}>Checkout</Text>
         <View style={{ width: 24 }} />

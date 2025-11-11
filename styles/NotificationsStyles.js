@@ -182,13 +182,9 @@ export const styles = StyleSheet.create({
     fontWeight: "600",
   },
   backBtn: {
-    position: "absolute",
-    left: 16,
-    width: 32,
-    height: 32,
+    width: 24,
+    height: 24,
     alignItems: "center",
     justifyContent: "center",
-    top: "50%",
-    marginTop: -16,
   }
 });

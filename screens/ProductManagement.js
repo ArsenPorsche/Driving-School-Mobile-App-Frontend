@@ -25,7 +25,8 @@ const ProductManagement = ({ navigation }) => {
   const loadProducts = async () => {
     try {
       setLoading(true);
-      const list = await productService.getProducts();
+      // Admin view: see all products including inactive
+      const list = await productService.getAllProductsAdmin();
       setProducts(list || []);
     } catch (error) {
       console.log("Error loading products:", error);
@@ -96,20 +97,20 @@ const ProductManagement = ({ navigation }) => {
 
   const handleDeleteProduct = async (productId) => {
     Alert.alert(
-      "Delete Product",
-      "Are you sure you want to delete this product?",
+      "Deactivate Product",
+      "Make this product inactive? It will be hidden from the store.",
       [
         { text: "Cancel", style: "cancel" },
         {
-          text: "Delete",
+          text: "Deactivate",
           style: "destructive",
           onPress: async () => {
             try {
               await productService.deleteProduct(productId);
-              Alert.alert("Success", "Product deleted successfully");
+              Alert.alert("Success", "Product deactivated successfully");
               loadProducts();
             } catch (error) {
-              Alert.alert("Error", "Failed to delete product");
+              Alert.alert("Error", error.response?.data?.message || "Failed to deactivate product");
             }
           },
         },
@@ -117,38 +118,65 @@ const ProductManagement = ({ navigation }) => {
     );
   };
 
-  const renderProductItem = ({ item }) => (
-    <View style={styles.productCard}>
-      <View style={styles.productInfo}>
+  const handleActivateProduct = async (productId) => {
+    try {
+      await productService.activateProduct(productId);
+      Alert.alert("Success", "Product activated successfully");
+      loadProducts();
+    } catch (error) {
+      Alert.alert("Error", error.response?.data?.message || "Failed to activate product");
+    }
+  };
+
+  const renderProductItem = ({ item }) => {
+    const inactive = item.active === false;
+    const lessonsEnt = item.entitlements?.find(e => e.unit === 'lesson');
+    const examsEnt = item.entitlements?.find(e => e.unit === 'exam');
+    return (
+      <View style={styles.productCard}>
+        <View style={styles.productInfo}>
           <Text style={styles.productName}>{item.title}</Text>
-        {item.description && (
-          <Text style={styles.productDescription}>{item.description}</Text>
-        )}
-        <Text style={styles.productCategory}>Category: {item.category}</Text>
+          {item.description && (
+            <Text style={styles.productDescription}>{item.description}</Text>
+          )}
+          <Text style={styles.productCategory}>Category: {item.category}</Text>
           <Text style={styles.productPrice}>Price: {item.priceMinor / 100} PLN</Text>
-          <Text style={styles.productQuantity}>
-            Quantity: {item.entitlements?.[0]?.count || 0} {item.entitlements?.[0]?.unit || ''}
-          </Text>
-          {!item.active && (
+          {lessonsEnt && (
+            <Text style={styles.productQuantity}>Lessons: {lessonsEnt.count}</Text>
+          )}
+          {examsEnt && (
+            <Text style={styles.productQuantity}>Exams: {examsEnt.count}</Text>
+          )}
+          {inactive && (
             <Text style={styles.inactiveLabel}>INACTIVE</Text>
           )}
+        </View>
+        <View style={styles.actionButtons}>
+          <TouchableOpacity
+            style={styles.editButton}
+            onPress={() => handleOpenModal(item)}
+          >
+            <Ionicons name="create" size={24} color="#1d4ed8" />
+          </TouchableOpacity>
+          {inactive ? (
+            <TouchableOpacity
+              style={styles.deleteButton}
+              onPress={() => handleActivateProduct(item._id)}
+            >
+              <Ionicons name="refresh-circle" size={28} color="#16a34a" />
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity
+              style={styles.deleteButton}
+              onPress={() => handleDeleteProduct(item._id)}
+            >
+              <Ionicons name="remove-circle" size={24} color="#dc2626" />
+            </TouchableOpacity>
+          )}
+        </View>
       </View>
-      <View style={styles.actionButtons}>
-        <TouchableOpacity
-          style={styles.editButton}
-          onPress={() => handleOpenModal(item)}
-        >
-          <Ionicons name="create" size={24} color="#1d4ed8" />
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.deleteButton}
-          onPress={() => handleDeleteProduct(item._id)}
-        >
-          <Ionicons name="trash" size={24} color="#dc2626" />
-        </TouchableOpacity>
-      </View>
-    </View>
-  );
+    );
+  };
 
   return (
     <View style={styles.container}>

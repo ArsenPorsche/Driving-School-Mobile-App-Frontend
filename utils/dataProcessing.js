@@ -1,12 +1,13 @@
 import moment from "moment";
 import _ from "lodash";
 
+// Enhanced to optionally accept instructors (with ratings) so we can append rating text next to instructor names
 export const processBookingData = (
   lessons,
   selectedInstructor,
-  selectedDate
+  selectedDate,
+  instructors = []
 ) => {
-  
   const marked = {};
 
   const availableDates = lessons
@@ -51,28 +52,30 @@ export const processBookingData = (
     const groupedByInstructor = _.groupBy(availableLessons, "instructor._id");
 
     groupedTimes = Object.entries(groupedByInstructor).map(
-      ([instructorId, instructorLessons]) => ({
-        instructorId,
-        instructorName:
-          `${instructorLessons[0].instructor.firstName} ${instructorLessons[0].instructor.lastName}`.trim(),
-        times: instructorLessons
-          .map((lesson) => ({
-            label: `${moment(lesson.date).format("HH:mm")} - ${moment(
-              lesson.date
-            )
-              .add(2, "hours")
-              .format("HH:mm")}`,
-            value: moment(lesson.date).format("YYYY-MM-DD HH:mm"),
-            sortValue: moment(lesson.date).valueOf(),
-            lessonId: lesson._id,
-          }))
-          .sort((a, b) => a.sortValue - b.sortValue),
-      })
+      ([instructorId, instructorLessons]) => {
+        const instructorData = instructors.find((inst) => inst.value === instructorId);
+        const rating = instructorData?.averageRating || 0;
+        const totalRatings = instructorData?.totalRatings || 0;
+        const ratingText = rating > 0 ? ` ⭐ ${rating.toFixed(1)} ` : "";
+
+        return {
+          instructorId,
+          instructorName: `${instructorLessons[0].instructor.firstName} ${instructorLessons[0].instructor.lastName}`.trim() + ratingText,
+          times: instructorLessons
+            .map((lesson) => ({
+              label: `${moment(lesson.date).format("HH:mm")} - ${moment(lesson.date)
+                .add(2, "hours")
+                .format("HH:mm")}`,
+              value: moment(lesson.date).format("YYYY-MM-DD HH:mm"),
+              sortValue: moment(lesson.date).valueOf(),
+              lessonId: lesson._id,
+            }))
+            .sort((a, b) => a.sortValue - b.sortValue),
+        };
+      }
     );
 
-    groupedTimes.sort((a, b) =>
-      a.instructorName.localeCompare(b.instructorName)
-    );
+    groupedTimes.sort((a, b) => a.instructorName.localeCompare(b.instructorName));
   }
 
   return { marked, groupedTimes };

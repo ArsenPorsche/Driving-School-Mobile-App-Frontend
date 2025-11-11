@@ -191,7 +191,7 @@ export default function ChatThread({ route, navigation, tokenRole }) {
           onPress={() => navigation.goBack()}
           style={styles.backBtn}
         >
-          <Ionicons name="chevron-back" size={24} color="#2d4150" />
+          <Ionicons name="arrow-back" size={24} color="#2d4150" />
         </TouchableOpacity>
         <View style={{ flex: 1 }}>
           <Text style={styles.headerTitle}>{partnerName}</Text>

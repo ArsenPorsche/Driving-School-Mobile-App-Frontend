@@ -14,18 +14,22 @@ const Profile = ({ navigation, tokenRole, handleLogout }) => (
     >
       <Text style={profileStyles.menuText}>Edit profile</Text>
     </TouchableOpacity>
-    {/* <TouchableOpacity
-      style={profileStyles.menuItem}
-      onPress={() => navigation.navigate("RideHistory")}
-    >
-      <Text style={profileStyles.menuText}>Ride history</Text>
-    </TouchableOpacity>
-    <TouchableOpacity
-      style={profileStyles.menuItem}
-      onPress={() => navigation.navigate("Tests")}
-    >
-      <Text style={profileStyles.menuText}>Tests</Text>
-    </TouchableOpacity> */}
+    {tokenRole === "student" && (
+      <TouchableOpacity
+        style={profileStyles.menuItem}
+        onPress={() => navigation.navigate("LessonHistory")}
+      >
+        <Text style={profileStyles.menuText}>Lesson History</Text>
+      </TouchableOpacity>
+    )}
+    {tokenRole === "instructor" && (
+      <TouchableOpacity
+        style={profileStyles.menuItem}
+        onPress={() => navigation.navigate("InstructorHistory")}
+      >
+        <Text style={profileStyles.menuText}>Lesson History</Text>
+      </TouchableOpacity>
+    )}
     <TouchableOpacity
       style={profileStyles.menuItem}
       onPress={handleLogout}
