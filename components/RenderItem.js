@@ -6,6 +6,49 @@ import { Ionicons } from "@expo/vector-icons";
 import moment from "moment";
 import { styles } from "../styles/AppStyles";
 import { calendarTheme } from "../config/calendarConfig";
+import { COLORS } from "../constants/theme";
+import { LESSON_TYPES } from "../constants/roles";
+
+const ICON_SIZE = 24;
+const SPACER = { width: ICON_SIZE };
+const MAX_BOOKING_WEEKS = 2;
+
+const findSelectedTimeLabel = (availableTimes, selectedTime) => {
+  for (const group of availableTimes) {
+    const found = group.times.find((t) => t.value === selectedTime);
+    if (found) return found.label;
+  }
+  return selectedTime;
+};
+
+const TimeGrid = ({ times, selectedTime, onTimeSelect }) => (
+  <View style={styles.timeGrid}>
+    {times.map((time, index) => (
+      <TouchableOpacity
+        key={index}
+        style={[
+          styles.timeButton,
+          selectedTime === time.value && styles.selectedTimeButton,
+        ]}
+        activeOpacity={1}
+        onPress={() => onTimeSelect(time)}
+      >
+        <Text
+          style={[
+            styles.timeButtonText,
+            selectedTime === time.value && styles.selectedTimeButtonText,
+          ]}
+        >
+          {time.label}
+        </Text>
+      </TouchableOpacity>
+    ))}
+  </View>
+);
+
+const EmptyTimes = () => (
+  <Text style={styles.noTimesText}>No available times on this date</Text>
+);
 
 export const renderItem = (item, props) => {
   const {
@@ -25,27 +68,29 @@ export const renderItem = (item, props) => {
   } = props;
 
   switch (item.type) {
-    case "header":
-      const headerTitle = item.lessonType === "exam" ? "Book an Exam" : "Book a Lesson";
+    case "header": {
+      const isExam = item.lessonType === LESSON_TYPES.EXAM;
+      const headerTitle = isExam ? "Book an Exam" : "Book a Lesson";
       return (
         <View style={styles.header}>
           <TouchableOpacity
             style={styles.backBtn}
             onPress={() => navigation.goBack()}
           >
-            <Ionicons name="arrow-back" size={24} color="#2d4150" />
+            <Ionicons name="arrow-back" size={ICON_SIZE} color={COLORS.text} />
           </TouchableOpacity>
           <Text style={styles.headerText}>{headerTitle}</Text>
-          <View style={{ width: 24 }} />
+          <View style={SPACER} />
         </View>
       );
+    }
 
     case "scheduleHeader":
       return (
         <View style={styles.header}>
-          <View style={{ width: 24 }} />
+          <View style={SPACER} />
           <Text style={styles.headerText}>Check your Schedule</Text>
-          <View style={{ width: 24 }} />
+          <View style={SPACER} />
         </View>
       );
 
@@ -75,7 +120,7 @@ export const renderItem = (item, props) => {
             markedDates={markedDates}
             theme={calendarTheme}
             minDate={moment().format("YYYY-MM-DD")}
-            maxDate={moment().add(2, "weeks").format("YYYY-MM-DD")}
+            maxDate={moment().add(MAX_BOOKING_WEEKS, "weeks").format("YYYY-MM-DD")}
           />
         </View>
       );
@@ -90,41 +135,17 @@ export const renderItem = (item, props) => {
                 <Text style={styles.instructorGroupTitle}>
                   {instructorGroup.instructorName}
                 </Text>
-                <View style={styles.timeGrid}>
-                  {instructorGroup.times.map((time, index) => (
-                    <TouchableOpacity
-                      key={index}
-                      style={[
-                        styles.timeButton,
-                        selectedTime === time.value &&
-                          styles.selectedTimeButton,
-                      ]}
-                      activeOpacity={1}
-                      onPress={() =>
-                        handleTimeSelect(
-                          time.value,
-                          instructorGroup.instructorId
-                        )
-                      }
-                    >
-                      <Text
-                        style={[
-                          styles.timeButtonText,
-                          selectedTime === time.value &&
-                            styles.selectedTimeButtonText,
-                        ]}
-                      >
-                        {time.label}
-                      </Text>
-                    </TouchableOpacity>
-                  ))}
-                </View>
+                <TimeGrid
+                  times={instructorGroup.times}
+                  selectedTime={selectedTime}
+                  onTimeSelect={(time) =>
+                    handleTimeSelect(time.value, instructorGroup.instructorId)
+                  }
+                />
               </View>
             ))
           ) : (
-            <Text style={styles.noTimesText}>
-              No available times on this date
-            </Text>
+            <EmptyTimes />
           )}
         </View>
       );
@@ -141,57 +162,34 @@ export const renderItem = (item, props) => {
                   <Text style={styles.instructorGroupTitle}>
                     {statusGroup.statusName}
                   </Text>
-                  <View style={styles.timeGrid}>
-                    {statusGroup.times.map((time, index) => (
-                      <TouchableOpacity
-                        key={index}
-                        style={[
-                          styles.timeButton,
-                          selectedTime === time.value &&
-                            styles.selectedTimeButton,
-                        ]}
-                        activeOpacity={1}
-                        onPress={() =>
-                          handleTimeSelect(
-                            time.value,
-                            time.lessonId,
-                            time
-                          )
-                        }
-                      >
-                        <Text
-                          style={[
-                            styles.timeButtonText,
-                            selectedTime === time.value &&
-                              styles.selectedTimeButtonText,
-                          ]}
-                        >
-                          {time.label}
-                        </Text>
-                      </TouchableOpacity>
-                    ))}
-                  </View>
+                  <TimeGrid
+                    times={statusGroup.times}
+                    selectedTime={selectedTime}
+                    onTimeSelect={(time) =>
+                      handleTimeSelect(time.value, time.lessonId, time)
+                    }
+                  />
                 </View>
               ))
           ) : (
-            <Text style={styles.noTimesText}>
-              No available times on this date
-            </Text>
+            <EmptyTimes />
           )}
         </View>
       );
 
-    case "button":
-      const buttonTitle = item.lessonType === "exam" ? "Book Exam" : "Book Lesson";
+    case "button": {
+      const isExam = item.lessonType === LESSON_TYPES.EXAM;
+      const buttonTitle = isExam ? "Book Exam" : "Book Lesson";
       return (
         <View style={styles.buttonContainer}>
           <Button
             title={buttonTitle}
             onPress={handleBookLesson}
-            color="#007AFF"
+            color={COLORS.accent}
           />
         </View>
       );
+    }
 
     case "info":
       return (
@@ -205,18 +203,7 @@ export const renderItem = (item, props) => {
           </Text>
           {selectedTime && (
             <Text style={styles.infoText}>
-              Time:{" "}
-              {(() => {
-                for (const group of availableTimes) {
-                  const foundTime = group.times.find(
-                    (t) => t.value === selectedTime
-                  );
-                  if (foundTime) {
-                    return foundTime.label;
-                  }
-                }
-                return selectedTime;
-              })()}
+              Time: {findSelectedTimeLabel(availableTimes, selectedTime)}
             </Text>
           )}
         </View>

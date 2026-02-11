@@ -1,13 +1,6 @@
-import React, { useState, useEffect } from "react";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  ActivityIndicator,
-  Alert,
-  ScrollView,
-} from "react-native";
-import { testService } from "../services/api";
+﻿import React, { useState, useEffect } from "react";
+import { View, Text, TouchableOpacity, ActivityIndicator, Alert, ScrollView } from "react-native";
+import { testApi } from "../services/testApi";
 import { styles } from "../styles/TestStyles";
 
 export default function TestQuiz({ route, navigation }) {
@@ -18,17 +11,15 @@ export default function TestQuiz({ route, navigation }) {
   const [selectedAnswers, setSelectedAnswers] = useState({});
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    loadTest();
-  }, []);
+  useEffect(() => { loadTest(); }, []);
 
   const loadTest = async () => {
     try {
       setLoading(true);
-      const data = await testService.getTest(topic);
+      const data = await testApi.getTest(topic);
       setTest(data);
       setQuestions(data.questions);
-    } catch (error) {
+    } catch {
       Alert.alert("Error", "Failed to load questions");
       navigation.goBack();
     } finally {
@@ -37,30 +28,18 @@ export default function TestQuiz({ route, navigation }) {
   };
 
   const selectAnswer = (answerIndex) => {
-    setSelectedAnswers({
-      ...selectedAnswers,
-      [currentIndex]: answerIndex,
-    });
-  };
-
-  const goToQuestion = (index) => {
-    setCurrentIndex(index);
+    setSelectedAnswers((prev) => ({ ...prev, [currentIndex]: answerIndex }));
   };
 
   const handleFinish = () => {
     const answeredCount = Object.keys(selectedAnswers).length;
     const correctCount = questions.reduce((count, question, index) => {
-      const userAnswer = selectedAnswers[index];
-      return count + (userAnswer === question.correctAnswer ? 1 : 0);
+      return count + (selectedAnswers[index] === question.correctAnswer ? 1 : 0);
     }, 0);
 
-    navigation.replace("TestResults", { 
-      questions, 
-      selectedAnswers,
-      totalQuestions: questions.length,
-      answeredCount,
-      correctCount,
-      topic: test.topic,
+    navigation.replace("TestResults", {
+      questions, selectedAnswers, totalQuestions: questions.length,
+      answeredCount, correctCount, topic: test.topic,
     });
   };
 
@@ -80,34 +59,17 @@ export default function TestQuiz({ route, navigation }) {
     <View style={styles.container}>
       <View style={styles.quizHeader}>
         <Text style={styles.quizTitle}>{test.topic}</Text>
-        <Text style={styles.progressText}>
-          Question {currentIndex + 1} of {questions.length}
-        </Text>
-        <Text style={styles.answeredText}>
-          Answered: {answeredCount} of {questions.length}
-        </Text>
+        <Text style={styles.progressText}>Question {currentIndex + 1} of {questions.length}</Text>
+        <Text style={styles.answeredText}>Answered: {answeredCount} of {questions.length}</Text>
       </View>
 
       <ScrollView style={styles.quizContent}>
         <Text style={styles.questionText}>{currentQuestion.question}</Text>
-
         {currentQuestion.answers.map((answer, index) => (
-          <TouchableOpacity
-            key={index}
-            style={[
-              styles.answerButton,
-              selectedAnswers[currentIndex] === index && styles.answerButtonSelected,
-            ]}
-            onPress={() => selectAnswer(index)}
-          >
-            <Text
-              style={[
-                styles.answerText,
-                selectedAnswers[currentIndex] === index && styles.answerTextSelected,
-              ]}
-            >
-              {answer}
-            </Text>
+          <TouchableOpacity key={index}
+            style={[styles.answerButton, selectedAnswers[currentIndex] === index && styles.answerButtonSelected]}
+            onPress={() => selectAnswer(index)}>
+            <Text style={[styles.answerText, selectedAnswers[currentIndex] === index && styles.answerTextSelected]}>{answer}</Text>
           </TouchableOpacity>
         ))}
       </ScrollView>
@@ -116,22 +78,10 @@ export default function TestQuiz({ route, navigation }) {
         <View style={styles.questionDots}>
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
             {questions.map((_, index) => (
-              <TouchableOpacity
-                key={index}
-                style={[
-                  styles.questionDot,
-                  selectedAnswers[index] !== undefined && styles.questionDotAnswered,
-                  index === currentIndex && styles.questionDotCurrent,
-                ]}
-                onPress={() => goToQuestion(index)}
-              >
-                <Text
-                  style={[
-                    styles.questionDotText,
-                    (selectedAnswers[index] !== undefined || index === currentIndex) &&
-                      styles.questionDotTextActive,
-                  ]}
-                >
+              <TouchableOpacity key={index}
+                style={[styles.questionDot, selectedAnswers[index] !== undefined && styles.questionDotAnswered, index === currentIndex && styles.questionDotCurrent]}
+                onPress={() => setCurrentIndex(index)}>
+                <Text style={[styles.questionDotText, (selectedAnswers[index] !== undefined || index === currentIndex) && styles.questionDotTextActive]}>
                   {index + 1}
                 </Text>
               </TouchableOpacity>
@@ -141,20 +91,13 @@ export default function TestQuiz({ route, navigation }) {
 
         <View style={styles.navigationButtons}>
           {currentIndex > 0 && (
-            <TouchableOpacity
-              style={styles.navButton}
-              onPress={() => setCurrentIndex(currentIndex - 1)}
-            >
-              <Text style={styles.navButtonText}>← Previous</Text>
+            <TouchableOpacity style={styles.navButton} onPress={() => setCurrentIndex(currentIndex - 1)}>
+              <Text style={styles.navButtonText}> Previous</Text>
             </TouchableOpacity>
           )}
-
           {currentIndex < questions.length - 1 ? (
-            <TouchableOpacity
-              style={styles.navButton}
-              onPress={() => setCurrentIndex(currentIndex + 1)}
-            >
-              <Text style={styles.navButtonText}>Next →</Text>
+            <TouchableOpacity style={styles.navButton} onPress={() => setCurrentIndex(currentIndex + 1)}>
+              <Text style={styles.navButtonText}>Next </Text>
             </TouchableOpacity>
           ) : (
             <TouchableOpacity style={styles.finishButton} onPress={handleFinish}>

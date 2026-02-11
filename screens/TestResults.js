@@ -1,34 +1,18 @@
-import React from "react";
-import {
-  View,
-  Text,
-  ScrollView,
-  TouchableOpacity,
-} from "react-native";
+﻿import React from "react";
+import { View, Text, ScrollView, TouchableOpacity } from "react-native";
 import { styles } from "../styles/TestStyles";
 
 export default function TestResults({ route, navigation }) {
   const { questions, selectedAnswers, totalQuestions, answeredCount, correctCount, topic } = route.params;
-
   const percentage = totalQuestions > 0 ? Math.round((correctCount / totalQuestions) * 100) : 0;
-
-  const goToCategories = () => {
-    navigation.navigate("TestCategories");
-  };
-
-  const retryTest = () => {
-    navigation.replace("TestQuiz", { topic });
-  };
 
   return (
     <View style={styles.container}>
       <ScrollView style={styles.resultsScroll} contentContainerStyle={styles.resultsScrollContent}>
         <View style={styles.resultHeader}>
-          <Text style={styles.resultEmoji}>📊</Text>
+          <Text style={styles.resultEmoji}></Text>
           <Text style={styles.resultTitle}>Results</Text>
-          <Text style={styles.resultScore}>
-            {correctCount} / {totalQuestions}
-          </Text>
+          <Text style={styles.resultScore}>{correctCount} / {totalQuestions}</Text>
           <Text style={styles.resultPercentage}>{percentage}%</Text>
         </View>
 
@@ -48,9 +32,7 @@ export default function TestResults({ route, navigation }) {
           </View>
           <View style={styles.summaryRow}>
             <Text style={styles.summaryLabel}>Incorrect:</Text>
-            <Text style={[styles.summaryValue, styles.wrongValue]}>
-              {answeredCount - correctCount}
-            </Text>
+            <Text style={[styles.summaryValue, styles.wrongValue]}>{answeredCount - correctCount}</Text>
           </View>
         </View>
 
@@ -62,15 +44,12 @@ export default function TestResults({ route, navigation }) {
           const wasAnswered = userAnswer !== undefined;
 
           return (
-            <View
-              key={index}
-              style={[
-                styles.reviewCard,
-                isCorrect && styles.reviewCardCorrect,
-                !isCorrect && wasAnswered && styles.reviewCardWrong,
-                !wasAnswered && styles.reviewCardUnanswered,
-              ]}
-            >
+            <View key={index} style={[
+              styles.reviewCard,
+              isCorrect && styles.reviewCardCorrect,
+              !isCorrect && wasAnswered && styles.reviewCardWrong,
+              !wasAnswered && styles.reviewCardUnanswered,
+            ]}>
               <View style={styles.reviewHeader}>
                 <Text style={styles.reviewNumber}>Question {index + 1}</Text>
                 <Text style={[
@@ -79,39 +58,22 @@ export default function TestResults({ route, navigation }) {
                   !isCorrect && wasAnswered && styles.reviewStatusWrong,
                   !wasAnswered && styles.reviewStatusUnanswered,
                 ]}>
-                  {!wasAnswered ? "⊘ Skipped" : isCorrect ? "✓ Correct" : "✗ Incorrect"}
+                  {!wasAnswered ? " Skipped" : isCorrect ? " Correct" : " Incorrect"}
                 </Text>
               </View>
-              
               <Text style={styles.reviewQuestion}>{question.question}</Text>
-              
               {question.answers.map((answer, ansIndex) => {
                 const isUserAnswer = userAnswer === ansIndex;
                 const isCorrectAnswer = ansIndex === question.correctAnswer;
-                
                 return (
-                  <View
-                    key={ansIndex}
-                    style={[
-                      styles.reviewAnswer,
-                      isCorrectAnswer && styles.reviewAnswerCorrect,
-                      isUserAnswer && !isCorrectAnswer && styles.reviewAnswerWrong,
-                    ]}
-                  >
-                    <Text
-                      style={[
-                        styles.reviewAnswerText,
-                        (isUserAnswer || isCorrectAnswer) && styles.reviewAnswerTextBold,
-                      ]}
-                    >
-                      {answer}
-                    </Text>
-                    {isCorrectAnswer && (
-                      <Text style={styles.reviewAnswerMark}>✓</Text>
-                    )}
-                    {isUserAnswer && !isCorrectAnswer && (
-                      <Text style={styles.reviewAnswerMarkWrong}>✗</Text>
-                    )}
+                  <View key={ansIndex} style={[
+                    styles.reviewAnswer,
+                    isCorrectAnswer && styles.reviewAnswerCorrect,
+                    isUserAnswer && !isCorrectAnswer && styles.reviewAnswerWrong,
+                  ]}>
+                    <Text style={[styles.reviewAnswerText, (isUserAnswer || isCorrectAnswer) && styles.reviewAnswerTextBold]}>{answer}</Text>
+                    {isCorrectAnswer && <Text style={styles.reviewAnswerMark}></Text>}
+                    {isUserAnswer && !isCorrectAnswer && <Text style={styles.reviewAnswerMarkWrong}></Text>}
                   </View>
                 );
               })}
@@ -121,10 +83,10 @@ export default function TestResults({ route, navigation }) {
       </ScrollView>
 
       <View style={styles.resultsActions}>
-        <TouchableOpacity style={styles.retryButton} onPress={retryTest}>
+        <TouchableOpacity style={styles.retryButton} onPress={() => navigation.replace("TestQuiz", { topic })}>
           <Text style={styles.retryButtonText}>Practice Again</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.backButton} onPress={goToCategories}>
+        <TouchableOpacity style={styles.backButton} onPress={() => navigation.navigate("TestCategories")}>
           <Text style={styles.backButtonText}>Back to Topics</Text>
         </TouchableOpacity>
       </View>

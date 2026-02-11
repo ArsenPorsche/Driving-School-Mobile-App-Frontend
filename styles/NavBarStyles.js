@@ -1,4 +1,5 @@
-import { StyleSheet } from "react-native";
+﻿import { StyleSheet } from "react-native";
+import { COLORS } from "../constants/theme";
 
 export const navBarStyles = StyleSheet.create({
   container: {
@@ -11,8 +12,8 @@ export const navBarStyles = StyleSheet.create({
     alignItems: "center",
     height: 60,
     borderTopWidth: 1,
-    borderColor: "#eee",
-    backgroundColor: "#fff",
+    borderColor: COLORS.border,
+    backgroundColor: COLORS.white,
     zIndex: 10,
   },
   notificationButton: {
@@ -22,7 +23,7 @@ export const navBarStyles = StyleSheet.create({
     position: "absolute",
     top: -5,
     right: -10,
-    backgroundColor: "#FF3B30",
+    backgroundColor: COLORS.badge,
     borderRadius: 10,
     minWidth: 20,
     height: 20,
@@ -31,7 +32,7 @@ export const navBarStyles = StyleSheet.create({
     paddingHorizontal: 5,
   },
   badgeText: {
-    color: "#fff",
+    color: COLORS.white,
     fontSize: 12,
     fontWeight: "bold",
   },

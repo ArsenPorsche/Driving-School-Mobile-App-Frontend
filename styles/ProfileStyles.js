@@ -1,36 +1,37 @@
-import { StyleSheet } from "react-native";
+﻿import { StyleSheet } from "react-native";
+import { COLORS, SPACING, FONT_SIZE, FONT_WEIGHT } from "../constants/theme";
 
 export const profileStyles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f8f9fa",
+    backgroundColor: COLORS.background,
     position: "relative",
     paddingTop: 60,
   },
   header: {
-    paddingBottom: 20,
+    paddingBottom: SPACING.xl,
     alignItems: "center",
     borderBottomWidth: 1,
-    borderColor: "#e1e8ed",
+    borderColor: COLORS.border,
   },
   headerText: {
-    fontSize: 20,
-    fontWeight: "700",
+    fontSize: FONT_SIZE.xxl,
+    fontWeight: FONT_WEIGHT.bold,
     marginBottom: 0,
     textAlign: "center",
-    color: "#1f2937",
+    color: COLORS.textPrimary,
   },
   menuItem: {
-    paddingVertical: 20,
-    paddingHorizontal: 20,
+    paddingVertical: SPACING.xl,
+    paddingHorizontal: SPACING.xl,
     borderBottomWidth: 1,
-    borderColor: "#e1e8ed",
-    backgroundColor: "#fff",
+    borderColor: COLORS.border,
+    backgroundColor: COLORS.white,
     justifyContent: "center",
   },
   menuText: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#2d4150",
+    fontSize: FONT_SIZE.lg,
+    fontWeight: FONT_WEIGHT.semibold,
+    color: COLORS.textSecondary,
   },
 });

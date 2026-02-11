@@ -1,24 +1,16 @@
-import React, { useState, useEffect } from "react";
-import {
-  View,
-  FlatList,
-  Alert,
-  Modal,
-  TouchableOpacity,
-  Text,
-} from "react-native";
-import { lessonService } from "../services/api";
-import {
-  processScheduleData,
-  createRenderData,
-  formatDate,
-} from "../utils/dataProcessing";
+﻿import React, { useState, useEffect } from "react";
+import { View, FlatList, Alert, Modal, TouchableOpacity, Text } from "react-native";
+import { useAuth } from "../context/AuthContext";
+import { lessonApi } from "../services/lessonApi";
+import { processScheduleData, createRenderData, formatDate } from "../utils/dataProcessing";
 import { renderItem } from "../components/RenderItem";
 import NavBar from "../components/NavBar";
 import { styles } from "../styles/AppStyles";
+import { ROLES } from "../constants/roles";
 import moment from "moment";
 
-const Schedule = ({ navigation, token, userRole }) => {
+export default function Schedule({ navigation }) {
+  const { token, role } = useAuth();
   const [lessons, setLessons] = useState([]);
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedTime, setSelectedTime] = useState(null);
@@ -30,9 +22,7 @@ const Schedule = ({ navigation, token, userRole }) => {
   const [dateOffer, setDateOffer] = useState(null);
   const [selectedLesson, setSelectedLesson] = useState(null);
 
-  useEffect(() => {
-    loadInitialData();
-  }, [token]);
+  useEffect(() => { loadInitialData(); }, [token]);
 
   useEffect(() => {
     const { marked, groupedTimes } = processScheduleData(lessons, selectedDate);
@@ -42,25 +32,18 @@ const Schedule = ({ navigation, token, userRole }) => {
 
   const loadInitialData = async () => {
     try {
-      console.log("Loading lessons for role:", userRole);
-      let lessonsData;
-      if (userRole === "instructor") {
-        lessonsData = await lessonService.getInstructorsLessons();
-      } else if (userRole === "student") {
-        lessonsData = await lessonService.getStudentLessons();
-      }
-      setLessons(lessonsData);
-    } catch (error) {
+      const data = role === ROLES.INSTRUCTOR
+        ? await lessonApi.getInstructorsLessons()
+        : await lessonApi.getStudentLessons();
+      setLessons(data);
+    } catch {
       Alert.alert("Error", "Failed to load data. Please try again.");
     }
   };
 
   const handleDayPress = (day) => {
     const dateString = day.dateString;
-    const hasAvailableLessons = lessons.some(
-      (lesson) => moment(lesson.date).format("YYYY-MM-DD") === dateString
-    );
-    if (hasAvailableLessons) {
+    if (lessons.some((l) => moment(l.date).format("YYYY-MM-DD") === dateString)) {
       setSelectedDate(dateString);
     } else {
       Alert.alert("No lessons available", "Please select another date.");
@@ -77,54 +60,39 @@ const Schedule = ({ navigation, token, userRole }) => {
 
   const handleGenerateAction = async () => {
     try {
-      if (userRole === "instructor") {
-        const lessonsDate = await lessonService.getLessonOffer();
+      if (role === ROLES.INSTRUCTOR) {
+        const lessonsDate = await lessonApi.getLessonOffer();
         setDateOffer(lessonsDate);
-        if (lessonsDate === null) {
-          Alert.alert("Error", "You have not free hours.");
-        }
-      } else if (userRole === "student") {
+        if (!lessonsDate) Alert.alert("Error", "You have not free hours.");
+      } else {
         handleCancelLesson();
       }
-    } catch (error) {
+    } catch {
       Alert.alert("Error", "Failed to generate lesson offer.");
     }
   };
 
   const handleCancelLesson = async () => {
     try {
-      const response = await lessonService.cancelLesson(selectedLesson);
-      
-      setLessons((prevLessons) => 
-        prevLessons.filter((l) => l._id !== selectedLesson)
-      );
-      
-      const refundMessage = response.refunded 
+      const response = await lessonApi.cancelLesson(selectedLesson);
+      setLessons((prev) => prev.filter((l) => l._id !== selectedLesson));
+      const msg = response.refunded
         ? `Lesson cancelled and refunded (cancelled ${response.hoursBefore}h before)`
         : `Lesson cancelled (cancelled ${response.hoursBefore}h before - no refund)`;
-        
-      Alert.alert("Success", refundMessage);
+      Alert.alert("Success", msg);
       setIsTimeMenuVisible(false);
       setSelectedTime(null);
       setSelectedTimeInfo(null);
-    } catch (error) {
-      Alert.alert("Error", error.response?.data?.message || "Failed to cancel lesson");
+    } catch (err) {
+      Alert.alert("Error", err.response?.data?.message || "Failed to cancel lesson");
     }
   };
 
   const handleAcceptAction = async () => {
-    const lessonData = await lessonService.changeLesson(
-      selectedLesson,
-      dateOffer
-    );
-    const { newLesson, oldLesson } = lessonData;
-    setLessons((prevLessons) => {
-      const updatedLessons = prevLessons.filter(
-        (l) => l._id !== selectedLesson
-      );
-      return [...updatedLessons, newLesson].sort(
-        (a, b) => moment(a.date) - moment(b.date)
-      );
+    const { newLesson } = await lessonApi.changeLesson(selectedLesson, dateOffer);
+    setLessons((prev) => {
+      const updated = prev.filter((l) => l._id !== selectedLesson);
+      return [...updated, newLesson].sort((a, b) => moment(a.date) - moment(b.date));
     });
     Alert.alert("Lesson has canceled", selectedTimeForMenu);
     setSelectedTime(null);
@@ -139,17 +107,10 @@ const Schedule = ({ navigation, token, userRole }) => {
     setDateOffer(null);
   };
 
-  const renderData = createRenderData(null, selectedDate, null, userRole, "schedule");
+  const renderData = createRenderData(null, selectedDate, null, role, "schedule");
 
   const itemRenderer = (item) =>
-    renderItem(item, {
-      markedDates,
-      handleDayPress,
-      availableTimes,
-      selectedDate,
-      selectedTime,
-      handleTimeSelect,
-    });
+    renderItem(item, { markedDates, handleDayPress, availableTimes, selectedDate, selectedTime, handleTimeSelect });
 
   return (
     <View style={styles.container}>
@@ -160,78 +121,41 @@ const Schedule = ({ navigation, token, userRole }) => {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.flatListContent}
       />
-      <NavBar role={userRole} navigation={navigation} />
-
-      <Modal
-        transparent={true}
-        visible={isTimeMenuVisible}
-        animationType="fade"
-        onRequestClose={() => setIsTimeMenuVisible(false)}
-      >
+      <NavBar navigation={navigation} />
+      <Modal transparent visible={isTimeMenuVisible} animationType="fade" onRequestClose={() => setIsTimeMenuVisible(false)}>
         <View style={styles.modalOverlay}>
           {!dateOffer ? (
             <View style={styles.modalContent}>
-              <Text style={styles.modalText}>
-                Selected Time: {formatDate(selectedTimeForMenu)}
-              </Text>
+              <Text style={styles.modalText}>Selected Time: {formatDate(selectedTimeForMenu)}</Text>
               {selectedTimeInfo && (
                 <>
-                  <Text style={styles.modalText}>
-                    Type: {selectedTimeInfo.lessonType === "exam" ? "Exam" : "Lesson"}
-                  </Text>
-                  {userRole === "instructor" && selectedTimeInfo.studentName && (
-                    <Text style={styles.modalText}>
-                      Student: {selectedTimeInfo.studentName}
-                    </Text>
+                  <Text style={styles.modalText}>Type: {selectedTimeInfo.lessonType === "exam" ? "Exam" : "Lesson"}</Text>
+                  {role === ROLES.INSTRUCTOR && selectedTimeInfo.studentName && (
+                    <Text style={styles.modalText}>Student: {selectedTimeInfo.studentName}</Text>
                   )}
-                  {userRole === "student" && selectedTimeInfo.instructorName && (
-                    <Text style={styles.modalText}>
-                      Instructor: {selectedTimeInfo.instructorName}
-                    </Text>
+                  {role === ROLES.STUDENT && selectedTimeInfo.instructorName && (
+                    <Text style={styles.modalText}>Instructor: {selectedTimeInfo.instructorName}</Text>
                   )}
                 </>
               )}
-              <TouchableOpacity
-                style={styles.modalButton}
-                onPress={handleGenerateAction}
-              >
+              <TouchableOpacity style={styles.modalButton} onPress={handleGenerateAction}>
                 <Text style={styles.modalButtonText}>Cancel lesson</Text>
               </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.modalButton}
-                onPress={handleCloseAction}
-              >
+              <TouchableOpacity style={styles.modalButton} onPress={handleCloseAction}>
                 <Text style={styles.modalButtonText}>Close</Text>
               </TouchableOpacity>
             </View>
           ) : (
             <View style={styles.modalContent}>
-              <Text style={styles.modalText}>
-                Old Time: {formatDate(selectedTimeForMenu)}
-              </Text>
-              <Text style={styles.modalText}>
-                Time Proposal: {formatDate(dateOffer)}
-              </Text>
-              <TouchableOpacity
-                style={styles.modalButton}
-                onPress={handleAcceptAction}
-              >
-                <Text style={styles.modalButtonText}>
-                  Accept Lesson & Cancel old One
-                </Text>
+              <Text style={styles.modalText}>Old Time: {formatDate(selectedTimeForMenu)}</Text>
+              <Text style={styles.modalText}>Time Proposal: {formatDate(dateOffer)}</Text>
+              <TouchableOpacity style={styles.modalButton} onPress={handleAcceptAction}>
+                <Text style={styles.modalButtonText}>Accept Lesson & Cancel old One</Text>
               </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.modalButton}
-                onPress={handleGenerateAction}
-              >
-                <Text style={styles.modalButtonText}>
-                  Generate another Time
-                </Text>
+              <TouchableOpacity style={styles.modalButton} onPress={handleGenerateAction}>
+                <Text style={styles.modalButtonText}>Generate another Time</Text>
               </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.modalButton}
-                onPress={handleCloseAction}
-              >
+              <TouchableOpacity style={styles.modalButton} onPress={handleCloseAction}>
                 <Text style={styles.modalButtonText}>Close</Text>
               </TouchableOpacity>
             </View>
@@ -240,6 +164,4 @@ const Schedule = ({ navigation, token, userRole }) => {
       </Modal>
     </View>
   );
-};
-
-export default Schedule;
+}
