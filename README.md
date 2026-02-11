@@ -93,21 +93,46 @@ npx eas build --platform all
 
 ## Screenshots
 
-Add screenshots here:
+Login screen
 
-- Login screen
-  ![photo_2_2025-12-10_20-00-26](https://github.com/user-attachments/assets/34fdf3d4-2470-4739-89b5-61e269487aba)
-- Home dashboard
-  ![photo_13_2025-12-04_15-16-21](https://github.com/user-attachments/assets/3be9a0d1-6e08-4e25-915c-33d311a41e4c)
-- Booking flow
-  ![photo_9_2025-12-04_15-16-21](https://github.com/user-attachments/assets/fa7b91cb-e2c8-48e7-b152-dce396faccb9)
-- Store
-  ![photo_2_2025-12-11_20-57-35](https://github.com/user-attachments/assets/fa792002-29e8-4c0d-b42f-dc7ac71d2bc3)
-- Chat
-  ![photo_10_2025-12-04_15-16-21](https://github.com/user-attachments/assets/06f5e97f-cded-4440-b345-3a65a1d362f2)
-- Test quiz
-  ![photo_7_2025-12-04_15-16-21](https://github.com/user-attachments/assets/84cccdde-83ef-4273-8028-afaeb41d6726)
-- Admin panel
-  ![photo_4_2025-12-04_15-16-21](https://github.com/user-attachments/assets/fac5c26d-f46d-4506-b877-f0f56f7def7a)
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/34fdf3d4-2470-4739-89b5-61e269487aba" width="250" />
+</p>
+
+Home dashboard
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/3be9a0d1-6e08-4e25-915c-33d311a41e4c" width="250" />
+</p>
+
+Booking flow
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/fa7b91cb-e2c8-48e7-b152-dce396faccb9" width="250" />
+</p>
+
+Store
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/fa792002-29e8-4c0d-b42f-dc7ac71d2bc3" width="250" />
+</p>
+
+Chat
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/06f5e97f-cded-4440-b345-3a65a1d362f2" width="250" />
+</p>
+
+Test quiz
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/84cccdde-83ef-4273-8028-afaeb41d6726" width="250" />
+</p>
+
+Admin panel
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/fac5c26d-f46d-4506-b877-f0f56f7def7a" width="250" />
+</p>
 
 
