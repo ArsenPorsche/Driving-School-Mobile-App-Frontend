@@ -2,6 +2,8 @@
 
 Cross-platform mobile app for managing a driving school. Students can book lessons, buy packages, chat with instructors, and take practice tests. Instructors manage their schedule and record exam results. Admins handle users and products.
 
+See also: [Backend (API)](https://github.com/xsllq/driving-school-backend)
+
 ## Tech Stack
 
 - React Native 0.81
